@@ -5,8 +5,7 @@ A real-time, multiplayer auction strategy game where players compete to win valu
 
 🎮 Play Now
 
-Click here to play the Simulator
-(Replace the link above with your actual GitHub Pages link after setting it up)
+[Click here to play the Simulator](https://your-username.github.io/your-repository-name)
 
 ✨ Features
 
