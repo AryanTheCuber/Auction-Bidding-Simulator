@@ -224,7 +224,7 @@
         </div>
     </div>
 
-    <!-- Host Setup Modal (Updated) -->
+    <!-- Host Setup Modal -->
     <div id="hostSetupModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-md p-4 overflow-y-auto">
         <div class="bg-slate-900 border-2 border-gold-500/50 rounded-2xl p-8 w-full max-w-lg relative shadow-2xl my-auto">
             <div class="absolute -top-4 -left-4 bg-gold-500 text-black font-bold px-4 py-1 rounded-lg shadow-lg">HOST CONFIG</div>
@@ -253,7 +253,7 @@
                     </div>
                 </div>
 
-                <!-- Host Purse Input (New) -->
+                <!-- Host Purse Input -->
                 <div id="hostPurseContainer">
                     <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Purse (₹)</label>
                     <input type="number" id="hostPurseInput" value="50000" min="1000" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none">
@@ -356,14 +356,15 @@
                     <div class="flex flex-col gap-3 w-full lg:w-auto">
                         <!-- Single Player Setup Controls -->
                         <div id="singlePlayerControls" class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-gold-500/20 flex flex-col md:flex-row gap-3 items-end shadow-lg hidden">
-                            <!-- Existing SP controls... -->
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Your Name</label>
-                                <input type="text" id="spNameInput" placeholder="Enter Name" class="w-full md:w-32 bg-black/40 border border-white/10 text-white placeholder-slate-600 text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:border-transparent focus:outline-none">
+                                <input type="text" id="spNameInput" placeholder="Enter Name" 
+                                    class="w-full md:w-32 bg-black/40 border border-white/10 text-white placeholder-slate-600 text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:border-transparent focus:outline-none">
                             </div>
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Your Purse (₹)</label>
-                                <input type="number" id="spPurseInput" value="50000" min="1000" class="w-full md:w-28 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                                <input type="number" id="spPurseInput" value="50000" min="1000"
+                                    class="w-full md:w-28 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
                             </div>
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Opponent Bot</label>
@@ -553,10 +554,8 @@
         </div>
     </div>
 
-    <!-- Modals (AI Config, Victory, etc. from previous version) -->
-    <!-- ... Keeping previous modals ... -->
+    <!-- Victory Modal -->
     <div id="victoryModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-md transition-opacity opacity-0 pointer-events-none">
-        <!-- Victory content -->
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-lg mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative">
             <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent"></div>
             <div class="p-8 text-center relative z-10">
@@ -894,6 +893,49 @@
                 badge.classList.add('hidden');
             }
 
+            // --- SINGLE PLAYER START ---
+            startSinglePlayerGame() {
+                const nameInput = document.getElementById('spNameInput').value.trim();
+                const purseInput = parseFloat(document.getElementById('spPurseInput').value);
+                const botType = document.getElementById('spBotSelect').value;
+
+                if(!nameInput) { alert("Please enter your name!"); return; }
+                if(isNaN(purseInput) || purseInput < 1000) { alert("Enter a valid purse amount (min 1000)!"); return; }
+
+                this.currentPlayerName = nameInput;
+                const botName = "Bot_" + botType;
+
+                // Reset state for new game
+                this.state.players = [nameInput, botName];
+                this.state.purses = {
+                    [nameInput]: purseInput,
+                    [botName]: purseInput * 1.2 
+                };
+                
+                this.state.aiPlayers = {};
+                this.activateAIForPlayer(botName, botType);
+
+                this.state.numRounds = 5;
+                this.state.currentRound = 0;
+                this.state.roundResults = [];
+                this.state.bidHistory = [];
+                this.state.suspiciousBids = [];
+                this.state.perRoundPlayerBids = {};
+                this.state.perPlayerLastBidTime = {};
+
+                // Hide input panel
+                document.getElementById('singlePlayerControls').innerHTML = `
+                    <div class="flex items-center gap-4 text-sm font-bold text-gold-400">
+                        <span>⚔️ DUEL MODE</span>
+                        <span class="text-white">${nameInput} vs ${botName}</span>
+                    </div>
+                `;
+
+                this.updateStatus('Duel Started!');
+                this.renderPlayers();
+                this.nextRound();
+            }
+
             // Check Login for Multiplayer
             checkLoginAndShowLobby() {
                 const user = this.auth ? this.auth.currentUser : null;
@@ -939,6 +981,15 @@
                 singleControls.classList.remove('flex');
                 multiControls.classList.remove('hidden');
                 badge.classList.remove('hidden');
+                
+                // Show/Hide Ready Buttons based on role
+                if (this.isHost) {
+                    document.getElementById('multiplayerStartBtn').classList.remove('hidden');
+                    document.getElementById('readyCheckArea').classList.add('hidden');
+                } else {
+                    document.getElementById('multiplayerStartBtn').classList.add('hidden');
+                    document.getElementById('readyCheckArea').classList.remove('hidden');
+                }
             }
 
             exitToMenu() {
@@ -1314,7 +1365,7 @@
 
                     let controlsHtml = '';
                     // ... (Controls logic same as before)
-                    if (isMe && !isSpectator) {
+                    if (isMe && !isSpectator && !isAI) {
                         controlsHtml = `
                         <div class="mt-4 flex flex-col gap-2">
                             <div class="flex gap-2">
@@ -1369,214 +1420,169 @@
                     `;
                     panel.appendChild(div);
                 });
+                
+                if (this.multiplayerMode) {
+                    document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
+                }
             }
 
-            // ... (Rest of existing methods: startTournament, nextRound, startTimer, placeBid, quickBid, toggleWithdraw, endRound, triggerWinAnimation, performRoundFairnessAnalysis, predictStrategy, updateStrategyPredictions, updateSuggestions, aiMakeBid, activateAIForPlayer, stopAIForPlayer, showFinalResults, closeVictoryModal, toggleDarkMode, addLog, logFairness, clearFairnessLog, updateStatus, updateLeaderboard, showAddAIModal, closeAddAIModal, openAIConfig, closeAIModal, createAIBot, applyAIConfig, kickPlayer, handleRemoteBid, broadcastBid, broadcastGameState, syncNewRound)
-            // THESE MUST BE INCLUDED TO PREVENT ERRORS
-            
-            // Re-adding essential methods to ensure no 'not a function' errors
             updateLeaderboard() {
                 const tbody = document.getElementById('leaderboardBody');
                 if(!tbody) return;
                 tbody.innerHTML = '';
+                
                 this.state.players.forEach(p => {
                     const wins = this.state.roundResults.filter(r => r[2] === p).length;
                     const row = document.createElement('tr');
-                    row.innerHTML = `<td class="p-3 font-medium">${p}</td><td class="p-3 text-center">${wins}</td><td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[p] || 0)}</td>`;
+                    row.innerHTML = `
+                        <td class="p-3 font-medium">${p}</td>
+                        <td class="p-3 text-center">${wins}</td>
+                        <td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[p] || 0)}</td>
+                    `;
                     tbody.appendChild(row);
                 });
             }
-            
-            startTournament() {
-                if (this.multiplayerMode && !this.isHost) { alert('Host Only'); return; }
-                // Ready check
-                // ... (Logic handled in listener visually, here we assume button is enabled only if ready)
-                this.state.currentRound = 0;
-                this.state.roundResults = [];
-                this.updateStatus('Tournament started');
-                this.renderPlayers();
-                this.nextRound();
+
+            addLog(msg, type = 'normal') {
+                const log = document.getElementById('auctionLog');
+                if(!log) return;
+                
+                if (log.children.length === 1 && log.children[0].textContent.includes('Awaiting')) {
+                    log.innerHTML = '';
+                }
+                
+                const div = document.createElement('div');
+                let classes = "px-3 py-2 rounded-lg text-xs font-mono mb-1 ";
+                
+                if (type === 'log-bid') {
+                    classes += "bg-slate-100 dark:bg-black/30 text-slate-700 dark:text-slate-300 border-l-4 border-gold-400";
+                } else if (type === 'log-round') {
+                    classes += "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-gold-200 font-bold border border-slate-300 dark:border-slate-700 text-center mt-4";
+                } else if (type === 'log-result') {
+                    classes += "bg-gold-50 dark:bg-gold-900/20 text-gold-700 dark:text-gold-300 font-bold border border-gold-200 dark:border-gold-800 animate-fade-in";
+                } else {
+                    classes += "text-slate-500";
+                }
+                
+                div.className = classes;
+                div.textContent = msg;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
             }
 
-            // ... Include all other logic (abbreviated for length constraint but assumed present in final file generation)
-            nextRound() {
-                if (this.multiplayerMode && !this.isHost) return;
-                if (this.state.currentRound >= this.state.numRounds) { this.showFinalResults(); return; }
-                this.state.currentRound++;
-                // If custom mode, keep reusing item or if list, iterate. Default logic iterates list.
-                this.state.currentItem = this.ITEMS[(this.state.currentRound - 1) % this.ITEMS.length];
-                const [itemName, basePrice] = this.state.currentItem;
-                this.state.highestBid = basePrice;
-                this.state.highestBidder = null;
-                this.state.lastBidder = null;
-                this.state.perRoundPlayerBids = {};
-                this.state.players.forEach(p => { this.state.perRoundPlayerBids[p] = []; });
-                this.state.roundEndTime = Date.now() + (this.ROUND_DURATION * 1000);
-                this.state.timerRunning = true;
-                this.state.roundStatus = 'active';
-                this.state.minIncrement = Math.max(1, basePrice * this.MIN_INCREMENT_RATIO);
+            logFairness(msg) {
+                const log = document.getElementById('fairnessLog');
+                if(!log) return;
                 
-                document.getElementById('itemName').textContent = itemName;
-                document.getElementById('basePrice').textContent = `₹${basePrice}`;
-                document.getElementById('minIncrement').textContent = `₹${Math.floor(this.state.minIncrement)}`;
-                document.getElementById('highestBid').textContent = `₹${Math.floor(this.state.highestBid)}`;
-                document.getElementById('highestBidderName').textContent = '-';
+                const div = document.createElement('div');
+                div.className = "flex gap-2 items-start py-1 border-b border-slate-100 dark:border-slate-700 last:border-0";
+                div.innerHTML = `<span class="text-xs text-slate-400 font-mono whitespace-nowrap">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span> <span class="text-slate-700 dark:text-slate-300">${msg}</span>`;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            clearFairnessLog() { 
+                const log = document.getElementById('fairnessLog');
+                if(log) log.innerHTML = ''; 
+            }
+
+            updateStatus(msg) { 
+                const el = document.getElementById('statusBar');
+                if(el) el.innerHTML = `<span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> ${msg}`; 
+            }
+
+            toggleDarkMode() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', 
+                    document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
+            }
+
+            showAddAIModal() { 
+                const m = document.getElementById('addAIModal'); 
+                if(!m) return;
+                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
                 
-                this.addLog(`\n--- Round ${this.state.currentRound}/${this.state.numRounds} Started ---`, 'log-round');
+                const count = this.state.players.filter(p => p.startsWith('AI_Bot')).length;
+                const nameInput = document.getElementById('newAIName');
+                if(nameInput) nameInput.value = `AI_Bot${count + 1}`;
+            }
+
+            closeAddAIModal() { 
+                const m = document.getElementById('addAIModal'); 
+                if(!m) return;
+                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+            }
+
+            openAIConfig(player) {
+                this.state.currentAIPlayer = player;
+                const m = document.getElementById('aiModal'); 
+                if(!m) return;
+                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
+                
+                const ai = this.state.aiPlayers[player];
+                const stratEl = document.getElementById('aiStrategy');
+                const activeEl = document.getElementById('aiActive');
+                
+                if(stratEl) stratEl.value = ai ? ai.strategy : 'Incremental';
+                if(activeEl) activeEl.checked = ai ? ai.active : false;
+            }
+
+            closeAIModal() {
+                const m = document.getElementById('aiModal'); 
+                if(!m) return;
+                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+                this.state.currentAIPlayer = null;
+            }
+
+            createAIBot() {
+                const name = document.getElementById('newAIName').value.trim();
+                const purse = parseFloat(document.getElementById('newAIPurse').value);
+                const strategy = document.getElementById('newAIStrategy').value;
+                const active = document.getElementById('newAIActive').checked;
+                
+                if(!name || isNaN(purse)) {
+                    alert('Invalid Input');
+                    return;
+                }
+                
+                if(this.state.players.includes(name)) {
+                    alert('Name exists');
+                    return;
+                }
+                
+                this.state.players.push(name);
+                this.state.purses[name] = purse;
+                
+                if(active) {
+                    this.activateAIForPlayer(name, strategy);
+                }
+                
+                this.renderPlayers();
                 this.updateLeaderboard();
-                this.renderPlayers();
-                this.startTimer();
-                if (this.multiplayerMode) this.broadcastGameState();
+                this.closeAddAIModal();
             }
-            
-            // ... (Rest of standard game loop functions)
-            startTimer() {
-                if (this.state.timerInterval) clearInterval(this.state.timerInterval);
-                let lastAnnouncement = 100;
-                this.state.timerInterval = setInterval(() => {
-                    if (!this.state.timerRunning) { clearInterval(this.state.timerInterval); return; }
-                    const now = Date.now();
-                    const diff = Math.ceil((this.state.roundEndTime - now) / 1000);
-                    this.state.roundTimeLeft = diff < 0 ? 0 : diff;
-                    const mins = Math.floor(this.state.roundTimeLeft / 60);
-                    const secs = this.state.roundTimeLeft % 60;
-                    const timerEl = document.getElementById('timer');
-                    if (timerEl) {
-                        timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-                        if (this.state.roundTimeLeft <= 10) timerEl.classList.add('text-rose-500');
-                    }
-                    if (this.state.roundTimeLeft <= 10 && lastAnnouncement > 10) { this.logFairness("🔨 Going ONCE!"); lastAnnouncement = 10; }
-                    if (this.state.roundTimeLeft <= 5 && lastAnnouncement > 5) { this.logFairness("🔨🔨 Going TWICE!"); lastAnnouncement = 5; }
-                    if (this.state.roundTimeLeft <= 0) {
-                        this.state.timerRunning = false;
-                        clearInterval(this.state.timerInterval);
-                        if (!this.multiplayerMode || this.isHost) this.endRound(false);
-                    }
-                }, 1000);
-            }
-            
-            // ... Re-adding all other methods to avoid 'not a function' errors
-            placeBid(player, amount = null, notify = true) {
-                // ... same logic as before ...
-                if (!this.state.timerRunning) return;
-                const [_, basePrice] = this.state.currentItem;
-                if (amount === null) {
-                    const input = document.getElementById(`bid-${player}`);
-                    if(!input) return;
-                    amount = parseFloat(input.value);
-                    input.value = '';
-                }
-                const purse = this.state.purses[player] || 0;
-                if (amount > purse) return;
-                if (amount < basePrice) return;
-                if (this.state.highestBidder !== null && amount < this.state.highestBid + this.state.minIncrement) return;
+
+            applyAIConfig() {
+                const p = this.state.currentAIPlayer;
+                const s = document.getElementById('aiStrategy').value;
+                const a = document.getElementById('aiActive').checked;
                 
-                this.state.highestBid = amount;
-                this.state.highestBidder = player;
-                this.state.lastBidder = player;
-                this.state.bidHistory.push([this.state.currentRound, player, amount, Date.now()/1000]);
-                
-                if (this.state.roundTimeLeft <= this.ANTI_SNIPING_WINDOW) {
-                    this.state.roundEndTime += (this.ANTI_SNIPING_EXTENSION * 1000);
-                    this.logFairness(`⏱ Sync: Anti-sniping extended round!`);
-                }
-                
-                this.addLog(`${player} bid ₹${Math.floor(amount)}`, 'log-bid');
-                document.getElementById('highestBid').textContent = `₹${Math.floor(this.state.highestBid)}`;
-                document.getElementById('highestBidderName').textContent = this.state.highestBidder;
-                this.updateLeaderboard();
-                this.renderPlayers();
-                if (this.multiplayerMode) this.broadcastBid(player, amount, this.state.roundEndTime);
-            }
-            
-            quickBid(player, type) {
-                if (!this.state.currentItem || !this.state.timerRunning) return;
-                const [_, basePrice] = this.state.currentItem;
-                const purse = this.state.purses[player] || 0;
-                let amount;
-                switch(type) {
-                    case 'min': amount = this.state.highestBid + this.state.minIncrement; break;
-                    case '10': amount = this.state.highestBid + (basePrice * 0.10); break;
-                    case '25': amount = this.state.highestBid + (basePrice * 0.25); break;
-                    case 'max': amount = purse; break;
-                }
-                if (this.state.highestBidder !== null && amount < this.state.highestBid + this.state.minIncrement) amount = this.state.highestBid + this.state.minIncrement;
-                this.placeBid(player, amount, true);
-            }
-            
-            toggleWithdraw(player) {
-                if (this.state.withdrawnPlayers[player]) delete this.state.withdrawnPlayers[player];
-                else this.state.withdrawnPlayers[player] = true;
-                this.renderPlayers();
-            }
-            
-            endRound(isSyncEvent = false) {
-                if (this.multiplayerMode && !this.isHost && !isSyncEvent) return;
-                if (this.state.roundStatus === 'ended') return;
-                this.state.timerRunning = false;
-                clearInterval(this.state.timerInterval);
-                this.state.roundStatus = 'ended';
-                const [itemName] = this.state.currentItem;
-                if (this.state.highestBidder) {
-                    const winner = this.state.highestBidder;
-                    const amount = this.state.highestBid;
-                    if (!this.multiplayerMode || this.isHost) {
-                        this.state.purses[winner] = Math.max(0, this.state.purses[winner] - amount);
-                        if (this.multiplayerMode && this.roomRef) this.roomRef.child('players').child(winner).update({ purse: this.state.purses[winner] });
-                    }
-                    this.state.roundResults.push([this.state.currentRound, itemName, winner, amount]);
-                    this.addLog(`🎉 ${winner} WINS!`, 'log-result');
-                    this.logFairness(`🔥 SOLD to ${winner}!`);
-                    this.triggerWinAnimation(winner);
+                if(a) {
+                    this.activateAIForPlayer(p, s);
                 } else {
-                    this.addLog(`🚫 Passed`, 'log-result');
+                    this.stopAIForPlayer(p);
                 }
-                this.updateLeaderboard();
+                
+                this.closeAIModal();
                 this.renderPlayers();
-                this.updateStatus('Round Ended');
-                if (this.multiplayerMode && this.isHost && !isSyncEvent) this.broadcastGameState();
             }
-            
-            // ... (Includes previously defined AI methods, broadcast methods, helpers, etc. truncated here for brevity in explanation but included in file)
-            // Ensured methods exist: triggerWinAnimation, performRoundFairnessAnalysis, predictStrategy, updateStrategyPredictions, updateSuggestions, aiMakeBid, activateAIForPlayer, stopAIForPlayer, showFinalResults, closeVictoryModal, kickPlayer, syncNewRound, handleRemoteBid, broadcastBid, broadcastGameState, createAIBot, showAddAIModal, closeAddAIModal, openAIConfig, applyAIConfig, closeAIModal.
-            
-            triggerWinAnimation(winnerName) {
-                const logArea = document.getElementById('auctionLog');
-                if(logArea) {
-                    logArea.classList.add('animate-pulse');
-                    setTimeout(() => logArea.classList.remove('animate-pulse'), 500);
-                }
-            }
-            performRoundFairnessAnalysis() {} // Stub for brevity, assuming logic exists
-            predictStrategy() { return { strategy: "Passive" }; }
-            updateStrategyPredictions() {}
-            updateSuggestions() {}
-            aiMakeBid(player) { /* AI Logic */ }
-            activateAIForPlayer(p, s) { this.state.aiPlayers[p] = { strategy: s, active: true }; }
-            stopAIForPlayer(p) { delete this.state.aiPlayers[p]; }
-            showFinalResults() {
-                // ... show confetti
-                document.getElementById('victoryModal').classList.remove('hidden');
-                document.getElementById('victoryModal').classList.add('flex');
-            }
-            closeVictoryModal() {
-                document.getElementById('victoryModal').classList.add('hidden');
-                document.getElementById('victoryModal').classList.remove('flex');
-                if(this.multiplayerMode) this.exitToMenu();
-            }
-            kickPlayer(p) { if(this.isHost) this.roomRef.child('players').child(p).remove(); }
-            syncNewRound(gs) { /* sync logic */ }
-            handleRemoteBid(b) { /* bid logic */ }
-            broadcastBid(p, a, t) { /* firebase push */ }
-            broadcastGameState() { /* firebase update */ }
-            createAIBot() { /* sp logic */ }
-            showAddAIModal() {}
-            closeAddAIModal() {}
-            openAIConfig() {}
-            applyAIConfig() {}
-            closeAIModal() {}
         }
 
+        // Initialize the game controller
         window.gameController = new GameController();
     </script>
 </body>
