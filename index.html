@@ -193,10 +193,13 @@
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Opponent Bot</label>
                                 <select id="spBotSelect" class="w-full md:w-40 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
-                                    <option value="Standard">Standard Bot</option>
-                                    <option value="Aggressive">Aggressive Bot (Risky)</option>
-                                    <option value="Sniper">Sniper Bot (Sneaky)</option>
-                                    <option value="Whale">Whale Bot (Rich)</option>
+                                    <option value="Incremental">Incremental (Standard)</option>
+                                    <option value="Aggressive">Aggressive (Risky)</option>
+                                    <option value="Conservative">Conservative (Safe)</option>
+                                    <option value="Passive">Passive (Slow)</option>
+                                    <option value="Adaptive">Adaptive (Smart)</option>
+                                    <option value="Sniper">Sniper (Last Second)</option>
+                                    <option value="Rapid">Rapid (Spammer)</option>
                                 </select>
                             </div>
                             <button onclick="window.gameController.startSinglePlayerGame()" class="w-full md:w-auto px-6 py-2 h-[38px] bg-gradient-to-b from-gold-400 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black font-bold rounded-lg shadow-lg hover:shadow-gold-500/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
@@ -1377,27 +1380,65 @@
                 const purse = this.state.purses[player] || 0;
                 const [itemName, basePrice] = this.state.currentItem;
                 const cur = this.state.highestBid;
+                const timeLeft = this.state.roundTimeLeft;
+
+                // Strategy Timing/Skip Logic
+                if (strategy === 'Sniper' && timeLeft > 8) {
+                    // Wait until end
+                    this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 1000);
+                    return;
+                }
+
+                if (strategy === 'Passive' && Math.random() < 0.7) {
+                    // Rarely bids
+                    this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000);
+                    return;
+                }
                 
-                if (Math.random() < 0.15) { 
+                if (Math.random() < 0.15 && strategy !== 'Rapid') { 
+                    // Random hesitation for non-rapid bots
                     this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000); 
                     return; 
                 }
                 
+                // Calculate Bid Amount
                 let bid = cur + this.state.minIncrement;
-                if (strategy === 'Aggressive') bid += basePrice * 0.1;
-                if (strategy === 'Whale') bid += basePrice * 0.25;
                 
+                if (strategy === 'Aggressive') {
+                    bid += basePrice * 0.1;
+                } else if (strategy === 'Whale') { // Keep legacy support
+                    bid += basePrice * 0.25;
+                } else if (strategy === 'Adaptive') {
+                    // Randomly aggressive or conservative
+                    if (Math.random() > 0.5) bid += basePrice * 0.05;
+                }
+                
+                // Conservative check: don't overpay too much relative to base
+                if (strategy === 'Conservative' && bid > basePrice * 2.5) {
+                     this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000); 
+                     return;
+                }
+
+                // Funds Check
                 if (bid > purse) {
-                    if (purse > cur) {
-                        bid = purse;
+                    if (purse > cur + this.state.minIncrement) {
+                        bid = purse; // All in
                     } else { 
-                        this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000); 
+                        // Broke
+                        this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000); 
                         return; 
                     }
                 }
                 
+                // Place Bid
                 this.placeBid(player, bid, false);
-                this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000 + Math.random() * 2000);
+                
+                // Next Bid Delay
+                let delay = 3000 + Math.random() * 2000;
+                if (strategy === 'Rapid') delay = 1000 + Math.random() * 1000;
+                if (strategy === 'Sniper') delay = 500; // Fast checks at end
+                
+                this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), delay);
             }
 
             activateAIForPlayer(player, strategy) {
