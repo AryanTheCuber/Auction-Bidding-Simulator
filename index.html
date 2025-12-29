@@ -557,6 +557,10 @@
             async initializeFirebase() {
                 // ==================================================================================
                 // ⚠️ IMPORTANT: YOU MUST REPLACE THIS CONFIG WITH YOUR OWN FROM FIREBASE CONSOLE ⚠️
+                // 1. Go to Firebase Console > Project Settings > General
+                // 2. Scroll to "Your Apps" > "SDK Setup and Configuration"
+                // 3. Select "Config" and copy the object to replace the one below.
+                // ==================================================================================
                 const fallbackConfig = {
                     apiKey: "AIzaSyDfrW6SMExgRnHjSM5bfCyQ4tRuBKIydqQ", // REPLACE THIS
                     authDomain: "auction-bidding-simulator.firebaseapp.com", // REPLACE THIS
@@ -1695,6 +1699,98 @@
                 });
                 
                 document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
+            }
+
+            // --- MISSING METHODS RESTORED BELOW ---
+
+            toggleDarkMode() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', 
+                    document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
+            }
+
+            showAddAIModal() { 
+                const m = document.getElementById('addAIModal'); 
+                if(!m) return;
+                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
+                
+                const count = this.state.players.filter(p => p.startsWith('AI_Bot')).length;
+                const nameInput = document.getElementById('newAIName');
+                if(nameInput) nameInput.value = `AI_Bot${count + 1}`;
+            }
+
+            closeAddAIModal() { 
+                const m = document.getElementById('addAIModal'); 
+                if(!m) return;
+                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+            }
+
+            openAIConfig(player) {
+                this.state.currentAIPlayer = player;
+                const m = document.getElementById('aiModal'); 
+                if(!m) return;
+                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
+                
+                const ai = this.state.aiPlayers[player];
+                const stratEl = document.getElementById('aiStrategy');
+                const activeEl = document.getElementById('aiActive');
+                
+                if(stratEl) stratEl.value = ai ? ai.strategy : 'Incremental';
+                if(activeEl) activeEl.checked = ai ? ai.active : false;
+            }
+
+            closeAIModal() {
+                const m = document.getElementById('aiModal'); 
+                if(!m) return;
+                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+                this.state.currentAIPlayer = null;
+            }
+
+            createAIBot() {
+                const name = document.getElementById('newAIName').value.trim();
+                const purse = parseFloat(document.getElementById('newAIPurse').value);
+                const strategy = document.getElementById('newAIStrategy').value;
+                const active = document.getElementById('newAIActive').checked;
+                
+                if(!name || isNaN(purse)) {
+                    alert('Invalid Input');
+                    return;
+                }
+                
+                if(this.state.players.includes(name)) {
+                    alert('Name exists');
+                    return;
+                }
+                
+                this.state.players.push(name);
+                this.state.purses[name] = purse;
+                
+                if(active) {
+                    this.activateAIForPlayer(name, strategy);
+                }
+                
+                this.renderPlayers();
+                this.updateLeaderboard();
+                this.closeAddAIModal();
+            }
+
+            applyAIConfig() {
+                const p = this.state.currentAIPlayer;
+                const s = document.getElementById('aiStrategy').value;
+                const a = document.getElementById('aiActive').checked;
+                
+                if(a) {
+                    this.activateAIForPlayer(p, s);
+                } else {
+                    this.stopAIForPlayer(p);
+                }
+                
+                this.closeAIModal();
+                this.renderPlayers();
             }
         }
 
