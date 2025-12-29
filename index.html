@@ -160,6 +160,64 @@
         </div>
     </div>
 
+    <!-- Multiplayer Login Screen (New) -->
+    <div id="loginPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
+        <div class="max-w-md w-full bg-slate-900 border border-gold-500/30 rounded-2xl p-10 shadow-2xl relative overflow-hidden text-center">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
+            <div class="text-5xl mb-6 animate-float">🔐</div>
+            <h2 class="text-3xl font-bold text-white mb-2">Authentication</h2>
+            <p class="text-slate-400 mb-8">Sign in to access multiplayer features</p>
+            
+            <button onclick="window.gameController.loginWithGoogle()" class="w-full px-6 py-4 bg-white text-gray-800 font-bold rounded-xl shadow-lg hover:bg-gray-100 flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1">
+                <svg class="w-6 h-6" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
+                Sign in with Google
+            </button>
+            <button onclick="window.gameController.exitToMenu()" class="mt-6 text-slate-500 hover:text-white text-sm underline">Cancel & Return to Menu</button>
+        </div>
+    </div>
+
+    <!-- Multiplayer Lobby (New) -->
+    <div id="lobbyPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
+        <div class="max-w-4xl w-full">
+            <h2 class="text-4xl font-bold text-center text-gold-400 mb-10 flex justify-center items-center gap-3">
+                <span>🌐</span> Multiplayer Lobby
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Create Room Card -->
+                <div class="bg-slate-900 border border-slate-700 hover:border-gold-500/50 rounded-2xl p-8 transition-all hover:transform hover:-translate-y-1 shadow-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gold-500 opacity-5 rounded-full blur-3xl group-hover:opacity-10 transition-opacity"></div>
+                    <div class="text-4xl mb-4">👑</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Create Room</h3>
+                    <p class="text-slate-400 mb-6">Host a new tournament. You control the settings and invite friends.</p>
+                    <button onclick="window.gameController.createRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 transition-all">
+                        Create & Host
+                    </button>
+                </div>
+
+                <!-- Join Room Card -->
+                <div class="bg-slate-900 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-8 transition-all hover:transform hover:-translate-y-1 shadow-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-5 rounded-full blur-3xl group-hover:opacity-10 transition-opacity"></div>
+                    <div class="text-4xl mb-4">🎟️</div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Join Room</h3>
+                    <p class="text-slate-400 mb-6">Enter a room code to join an existing tournament.</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="lobbyRoomCode" placeholder="Enter Code (e.g. ROOM-X8Y)" class="flex-1 bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none uppercase">
+                        <button onclick="window.gameController.joinRoom()" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all">
+                            Join
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button onclick="window.gameController.exitToMenu()" class="px-6 py-2 border border-slate-700 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                    ← Back to Menu
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Game App -->
     <div id="mainApp" class="hidden">
         <header class="bg-gradient-to-r from-gray-900 via-slate-900 to-black text-white shadow-2xl relative overflow-hidden border-b border-gold-600/30">
@@ -208,28 +266,10 @@
                             </button>
                         </div>
 
-                        <!-- Multiplayer Controls -->
+                        <!-- Multiplayer Controls - Simplified for In-Game Status Only -->
                         <div id="multiplayerStatus" class="w-full hidden">
                             <div class="flex flex-col gap-2 items-center md:items-end">
-                                <div id="googleAuthSection" class="w-full md:w-auto hidden animate-pulse">
-                                    <button onclick="window.gameController.loginWithGoogle()" class="w-full px-4 py-2 bg-white text-gray-700 font-bold rounded-lg shadow hover:bg-gray-100 flex items-center justify-center gap-2 transition-all">
-                                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
-                                        Sign in with Google
-                                    </button>
-                                    <p class="text-xs text-center text-slate-400 mt-2">Authentication Required</p>
-                                </div>
-
-                                <div id="multiplayerButtons" class="flex gap-2 w-full md:w-auto hidden">
-                                    <button onclick="window.gameController.createRoom()" class="flex-1 whitespace-nowrap px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-gold-400 text-sm font-bold rounded-lg shadow hover:shadow-md transition-all">
-                                        👑 Create Room
-                                    </button>
-                                    <button onclick="window.gameController.joinRoom()" class="flex-1 whitespace-nowrap px-4 py-2 bg-gold-600 hover:bg-gold-500 text-black text-sm font-bold rounded-lg shadow hover:shadow-md transition-all">
-                                        🚪 Join Room
-                                    </button>
-                                </div>
-                                
                                 <div id="multiplayerRoomInfo" class="hidden"></div>
-                                
                                 <button id="multiplayerStartBtn" onclick="window.gameController.startTournament()" class="hidden w-full px-6 py-2 bg-gradient-to-b from-gold-400 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black font-bold rounded-lg shadow-lg hover:shadow-gold-500/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
                                     <span>▶</span> Start Tournament
                                 </button>
@@ -539,6 +579,7 @@
                 this.isHost = false;
                 this.roomRef = null;
                 this.multiplayerMode = false;
+                this.inMultiplayerFlow = false; // New flag to track flow
                 this.firebaseInitialized = false;
                 this.database = null;
                 this.auth = null;
@@ -587,12 +628,9 @@
                             console.log("✅ Auth Ready (Google):", user.uid);
                             this.firebaseInitialized = true;
                             
-                            // Hide login button and show multiplayer buttons if logged in
-                            const authSec = document.getElementById('googleAuthSection');
-                            const multiBtns = document.getElementById('multiplayerButtons');
-                            if(authSec && multiBtns) {
-                                authSec.classList.add('hidden');
-                                multiBtns.classList.remove('hidden');
+                            // If user logs in while in multiplayer flow, auto-advance to lobby
+                            if (this.inMultiplayerFlow) {
+                                this.showLobby();
                             }
                         } else {
                             // If user is anonymous, Force Sign Out to clear cached session
@@ -600,14 +638,6 @@
                                 console.log("Cleaning up anonymous session to force Google Login...");
                                 this.auth.signOut();
                                 return; // Listener will trigger again with null
-                            }
-
-                            // Show login button if not logged in
-                            const authSec = document.getElementById('googleAuthSection');
-                            const multiBtns = document.getElementById('multiplayerButtons');
-                            if(authSec && multiBtns) {
-                                authSec.classList.remove('hidden');
-                                multiBtns.classList.add('hidden');
                             }
                         }
                     });
@@ -682,55 +712,84 @@
                 modal.classList.remove('flex');
             }
 
-            // Step 2: Confirm Instructions -> Enter Game
+            // Step 2: Confirm Instructions -> Branch Logic
             confirmInstructions() {
                 this.hideInstructions();
-                this.enterGame(this.selectedPendingMode);
+                const mode = this.selectedPendingMode;
+
+                if (mode === 'single') {
+                    this.inMultiplayerFlow = false;
+                    this.startSinglePlayerSetup();
+                } else if (mode === 'multi') {
+                    this.inMultiplayerFlow = true;
+                    this.checkLoginAndShowLobby();
+                }
             }
 
-            enterGame(mode) {
+            // START Single Player Setup (Shows Main App directly)
+            startSinglePlayerSetup() {
                 const entryPage = document.getElementById('entryPage');
                 const mainApp = document.getElementById('mainApp');
                 const singleControls = document.getElementById('singlePlayerControls');
                 const multiControls = document.getElementById('multiplayerStatus');
                 const badge = document.getElementById('playerCountBadge');
 
-                this.transitionToMain(entryPage, mainApp);
+                entryPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                mainApp.classList.add('animate-fade-in');
 
-                if (mode === 'single') {
-                    this.multiplayerMode = false;
-                    singleControls.classList.remove('hidden');
-                    singleControls.classList.add('flex');
-                    multiControls.classList.add('hidden');
-                    badge.classList.add('hidden'); // Hide active count
-                    
-                } else if (mode === 'multi') {
-                    this.multiplayerMode = true;
-                    singleControls.classList.add('hidden');
-                    singleControls.classList.remove('flex');
-                    multiControls.classList.remove('hidden');
-                    badge.classList.remove('hidden');
-                    
-                    // Trigger auth check visually
-                    // Strict check: must exist AND NOT be anonymous
-                    const user = this.auth ? this.auth.currentUser : null;
-                    if (user && !user.isAnonymous) {
-                         document.getElementById('googleAuthSection').classList.add('hidden');
-                         document.getElementById('multiplayerButtons').classList.remove('hidden');
-                    } else {
-                         document.getElementById('googleAuthSection').classList.remove('hidden');
-                         document.getElementById('multiplayerButtons').classList.add('hidden');
-                    }
+                this.multiplayerMode = false;
+                singleControls.classList.remove('hidden');
+                singleControls.classList.add('flex');
+                multiControls.classList.add('hidden');
+                badge.classList.add('hidden');
+            }
+
+            // Check Login for Multiplayer
+            checkLoginAndShowLobby() {
+                const user = this.auth ? this.auth.currentUser : null;
+                const isLoggedIn = user && !user.isAnonymous;
+
+                if (isLoggedIn) {
+                    this.showLobby();
+                } else {
+                    this.showLogin();
                 }
             }
 
-            transitionToMain(entryPage, mainApp) {
-                entryPage.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-                setTimeout(() => {
-                    entryPage.classList.add('hidden');
-                    mainApp.classList.remove('hidden');
-                    mainApp.classList.add('animate-fade-in');
-                }, 500);
+            showLogin() {
+                document.getElementById('entryPage').classList.add('hidden');
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('loginPage').classList.add('flex');
+            }
+
+            showLobby() {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('loginPage').classList.remove('flex');
+                
+                document.getElementById('entryPage').classList.add('hidden'); // Ensure entry is gone
+                
+                document.getElementById('lobbyPage').classList.remove('hidden');
+                document.getElementById('lobbyPage').classList.add('flex');
+            }
+
+            transitionToMainApp() {
+                document.getElementById('lobbyPage').classList.add('hidden');
+                document.getElementById('lobbyPage').classList.remove('flex');
+
+                const mainApp = document.getElementById('mainApp');
+                const singleControls = document.getElementById('singlePlayerControls');
+                const multiControls = document.getElementById('multiplayerStatus');
+                const badge = document.getElementById('playerCountBadge');
+
+                mainApp.classList.remove('hidden');
+                mainApp.classList.add('animate-fade-in');
+
+                this.multiplayerMode = true;
+                singleControls.classList.add('hidden');
+                singleControls.classList.remove('flex');
+                multiControls.classList.remove('hidden');
+                badge.classList.remove('hidden');
             }
 
             exitToMenu() {
@@ -783,6 +842,7 @@
                     createdAt: Date.now()
                 });
 
+                this.transitionToMainApp();
                 this.updateMultiplayerUI();
                 this.setupRoomListeners();
                 this.logFairness(`✅ Room created: ${this.currentRoom}`);
@@ -793,8 +853,10 @@
                 const user = this.auth.currentUser;
                 if (!user || user.isAnonymous) { alert('Please sign in with Google first'); return; }
                 
-                const roomCode = prompt('Enter the Room Code:');
-                if (!roomCode) return;
+                const roomCodeInput = document.getElementById('lobbyRoomCode');
+                const roomCode = roomCodeInput ? roomCodeInput.value : prompt('Enter the Room Code:');
+                
+                if (!roomCode) { alert("Please enter a room code"); return; }
                 
                 const playerName = prompt('Enter your player name:', user.displayName || 'Guest');
                 if (!playerName) return;
@@ -813,8 +875,7 @@
                 this.roomRef.once('value').then(snapshot => {
                     if (!snapshot.exists()) {
                         alert('Room not found!');
-                        this.exitToMenu();
-                        return;
+                        return; // Stay in lobby
                     }
 
                     this.roomRef.child('players').child(playerName).set({
@@ -824,23 +885,20 @@
                         joinedAt: Date.now()
                     });
 
+                    this.transitionToMainApp();
                     this.updateMultiplayerUI();
                     this.setupRoomListeners();
                     this.logFairness(`✅ Joined room: ${this.currentRoom}`);
                 }).catch(error => {
                     alert('Error: ' + error.message);
-                    this.exitToMenu();
                 });
             }
 
             updateMultiplayerUI() {
                 const roomInfoDiv = document.getElementById('multiplayerRoomInfo');
-                const buttonsDiv = document.getElementById('multiplayerButtons');
                 const startBtn = document.getElementById('multiplayerStartBtn');
                 
                 if (this.multiplayerMode && this.currentRoom) {
-                    if (buttonsDiv) buttonsDiv.classList.add('hidden');
-                    
                     if (roomInfoDiv) {
                         roomInfoDiv.classList.remove('hidden');
                         
