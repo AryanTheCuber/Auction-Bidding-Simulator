@@ -79,6 +79,12 @@
         .hero-gradient {
             background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.3) 100%);
         }
+
+        .active-cat {
+            border-color: #fbbf24 !important; /* gold-400 */
+            background-color: rgba(30, 41, 59, 0.8) !important; /* slate-800 */
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-slate-800 font-sans min-h-screen transition-colors duration-300 dark:bg-dark-950 dark:text-slate-100 overflow-x-hidden">
@@ -160,7 +166,7 @@
         </div>
     </div>
 
-    <!-- Multiplayer Login Screen (New) -->
+    <!-- Multiplayer Login Screen -->
     <div id="loginPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
         <div class="max-w-md w-full bg-slate-900 border border-gold-500/30 rounded-2xl p-10 shadow-2xl relative overflow-hidden text-center">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
@@ -176,7 +182,7 @@
         </div>
     </div>
 
-    <!-- Multiplayer Lobby (New) -->
+    <!-- Multiplayer Lobby -->
     <div id="lobbyPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
         <div class="max-w-4xl w-full">
             <h2 class="text-4xl font-bold text-center text-gold-400 mb-10 flex justify-center items-center gap-3">
@@ -219,7 +225,7 @@
     </div>
 
     <!-- Host Setup Modal -->
-    <div id="hostSetupModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/95 backdrop-blur-md p-4">
+    <div id="hostSetupModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-md p-4">
         <div class="bg-slate-900 border-2 border-gold-500/50 rounded-2xl p-8 w-full max-w-lg relative shadow-2xl">
             <div class="absolute -top-4 -left-4 bg-gold-500 text-black font-bold px-4 py-1 rounded-lg shadow-lg">HOST CONFIG</div>
             
@@ -681,7 +687,7 @@
                 this.firebaseInitialized = false;
                 this.database = null;
                 this.auth = null;
-                this.selectedPendingMode = null;
+                this.selectedPendingMode = null; // Used for instruction buffer
 
                 this.initializeFirebase();
                 this.initializeDarkMode();
@@ -696,6 +702,10 @@
             async initializeFirebase() {
                 // ==================================================================================
                 // ⚠️ IMPORTANT: YOU MUST REPLACE THIS CONFIG WITH YOUR OWN FROM FIREBASE CONSOLE ⚠️
+                // 1. Go to Firebase Console > Project Settings > General
+                // 2. Scroll to "Your Apps" > "SDK Setup and Configuration"
+                // 3. Select "Config" and copy the object to replace the one below.
+                // ==================================================================================
                 const fallbackConfig = {
                     apiKey: "AIzaSyDfrW6SMExgRnHjSM5bfCyQ4tRuBKIydqQ", // REPLACE THIS
                     authDomain: "auction-bidding-simulator.firebaseapp.com", // REPLACE THIS
@@ -717,16 +727,29 @@
                     this.database = firebase.database();
 
                     this.auth.onAuthStateChanged((user) => {
+                        // Strict check: User must exist AND NOT be anonymous
                         if (user && !user.isAnonymous) {
                             console.log("✅ Auth Ready (Google):", user.uid);
                             this.firebaseInitialized = true;
+                            
+                            // If user logs in while in multiplayer flow, auto-advance to lobby
                             if (this.inMultiplayerFlow) {
                                 this.showLobby();
                             }
                         } else {
+                            // If user is anonymous, Force Sign Out to clear cached session
                             if (user && user.isAnonymous) {
+                                console.log("Cleaning up anonymous session to force Google Login...");
                                 this.auth.signOut();
-                                return;
+                                return; // Listener will trigger again with null
+                            }
+
+                            // Show login button if not logged in
+                            const authSec = document.getElementById('googleAuthSection');
+                            const multiBtns = document.getElementById('multiplayerButtons');
+                            if(authSec && multiBtns) {
+                                authSec.classList.remove('hidden');
+                                multiBtns.classList.add('hidden');
                             }
                         }
                     });
@@ -749,7 +772,14 @@
 
                 const provider = new firebase.auth.GoogleAuthProvider();
                 this.auth.signInWithPopup(provider).catch(error => {
-                    alert("Login Failed: " + error.message);
+                    let msg = "Login Failed: " + error.message;
+                    if (error.code === 'auth/configuration-not-found' || error.code === 'auth/api-key-not-valid') {
+                        msg += "\n\n🔴 ACTION REQUIRED: You are using a placeholder Firebase Config. You must create your own Firebase project and paste your config keys into the code.";
+                    }
+                    if (error.code === 'auth/unauthorized-domain') {
+                        msg += "\n\n🔴 ACTION REQUIRED: Go to Firebase Console > Authentication > Settings > Authorized Domains and add your current domain (e.g., localhost or your custom domain).";
+                    }
+                    alert(msg);
                 });
             }
 
@@ -808,7 +838,7 @@
                 }
             }
 
-            // START Single Player Setup
+            // START Single Player Setup (Shows Main App directly)
             startSinglePlayerSetup() {
                 const entryPage = document.getElementById('entryPage');
                 const mainApp = document.getElementById('mainApp');
@@ -827,6 +857,7 @@
                 badge.classList.add('hidden');
             }
 
+            // Check Login for Multiplayer
             checkLoginAndShowLobby() {
                 const user = this.auth ? this.auth.currentUser : null;
                 const isLoggedIn = user && !user.isAnonymous;
@@ -848,7 +879,7 @@
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('loginPage').classList.remove('flex');
                 
-                document.getElementById('entryPage').classList.add('hidden');
+                document.getElementById('entryPage').classList.add('hidden'); // Ensure entry is gone
                 
                 document.getElementById('lobbyPage').classList.remove('hidden');
                 document.getElementById('lobbyPage').classList.add('flex');
@@ -939,15 +970,12 @@
                 // Let's add them but use a flag 'isSpectator'
                 playersObj[playerName] = {
                     name: playerName,
-                    purse: participate ? 1000000 : 0, // Big purse for host? Or standard? Let's give standard 50k
+                    purse: participate ? 50000 : 0, 
                     online: true,
                     joinedAt: Date.now(),
                     isSpectator: !participate,
                     isHost: true
                 };
-                if(participate) {
-                    playersObj[playerName].purse = 50000;
-                }
 
                 this.roomRef.set({
                     host: playerName,
@@ -1250,7 +1278,54 @@
                 });
             }
 
+            // --- Single Player Logic ---
+            startSinglePlayerGame() {
+                const nameInput = document.getElementById('spNameInput').value.trim();
+                const purseInput = parseFloat(document.getElementById('spPurseInput').value);
+                const botType = document.getElementById('spBotSelect').value;
+
+                if(!nameInput) { alert("Please enter your name!"); return; }
+                if(isNaN(purseInput) || purseInput < 1000) { alert("Enter a valid purse amount (min 1000)!"); return; }
+
+                this.currentPlayerName = nameInput;
+                const botName = "Bot_" + botType;
+
+                // Reset state for new game
+                this.state.players = [nameInput, botName];
+                this.state.purses = {
+                    [nameInput]: purseInput,
+                    [botName]: purseInput * 1.2 // Give bot a slight edge
+                };
+                
+                // Clear old AI
+                this.state.aiPlayers = {};
+                
+                // Activate the selected bot
+                this.activateAIForPlayer(botName, botType);
+
+                this.state.numRounds = 5;
+                this.state.currentRound = 0;
+                this.state.roundResults = [];
+                this.state.bidHistory = [];
+                this.state.suspiciousBids = [];
+                this.state.perRoundPlayerBids = {};
+                this.state.perPlayerLastBidTime = {};
+
+                // Hide input panel, show game status
+                document.getElementById('singlePlayerControls').innerHTML = `
+                    <div class="flex items-center gap-4 text-sm font-bold text-gold-400">
+                        <span>⚔️ DUEL MODE</span>
+                        <span class="text-white">${nameInput} vs ${botName}</span>
+                    </div>
+                `;
+
+                this.updateStatus('Duel Started!');
+                this.renderPlayers();
+                this.nextRound();
+            }
+
             startTournament() {
+                // This is now primarily for multiplayer host start
                 if (this.multiplayerMode && !this.isHost) {
                     alert('Only the host can start the tournament!');
                     return;
@@ -1261,6 +1336,7 @@
                     return;
                 }
 
+                this.state.numRounds = 5;
                 this.state.currentRound = 0;
                 this.state.roundResults = [];
                 this.state.bidHistory = [];
@@ -1755,7 +1831,7 @@
 
                 this.state.players.forEach(player => {
                     const isWithdrawn = this.state.withdrawnPlayers[player];
-                    const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : true;
+                    const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : (player === this.currentPlayerName || this.currentPlayerName === null);
                     const isWinning = player === this.state.highestBidder;
                     const isAI = this.state.aiPlayers[player]?.active;
                     
@@ -1814,21 +1890,18 @@
                                 <button onclick="window.gameController.quickBid('${player}', 'max')" class="py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors" ${isWithdrawn ? 'disabled' : ''}>Max</button>
                             </div>
                             <div class="flex gap-2 mt-1">
-                                <button onclick="window.gameController.openAIConfig('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">⚙ AI</button>
+                                <button onclick="window.gameController.openAIConfig('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">⚙ Auto-Bid</button>
                                 <button onclick="window.gameController.toggleWithdraw('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">
                                     ${isWithdrawn ? 'Rejoin' : 'Withdraw'}
                                 </button>
                             </div>
                         </div>`;
-                    } else if (isSpectator) {
-                        controlsHtml = `<div class="mt-3 p-2 bg-slate-50 dark:bg-black/30 rounded-lg text-center text-xs text-slate-400 italic">Spectating Mode Active</div>`;
                     } else {
                         controlsHtml = `<div class="mt-3 p-2 bg-slate-50 dark:bg-black/30 rounded-lg text-center text-xs text-slate-400 italic">Controls Hidden</div>`;
                     }
 
                     div.innerHTML = `
                         ${winningBadge}
-                        ${hostActions}
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-black flex items-center justify-center text-gold-400 font-bold text-xs shadow-sm ring-1 ring-gold-500/20">
@@ -1836,7 +1909,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-tight">${player}</h4>
-                                    <div class="flex gap-1">${aiBadge} ${specBadge}</div>
+                                    <div class="flex gap-1">${aiBadge}</div>
                                 </div>
                             </div>
                             <div class="text-right">
@@ -1849,10 +1922,75 @@
                     panel.appendChild(div);
                 });
                 
-                document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
+                if (this.multiplayerMode) {
+                    document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
+                }
             }
 
-            // --- MISSING METHODS RESTORED BELOW ---
+            updateLeaderboard() {
+                const tbody = document.getElementById('leaderboardBody');
+                if(!tbody) return;
+                tbody.innerHTML = '';
+                
+                this.state.players.forEach(p => {
+                    const wins = this.state.roundResults.filter(r => r[2] === p).length;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="p-3 font-medium">${p}</td>
+                        <td class="p-3 text-center">${wins}</td>
+                        <td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[p] || 0)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            addLog(msg, type = 'normal') {
+                const log = document.getElementById('auctionLog');
+                if(!log) return;
+                
+                if (log.children.length === 1 && log.children[0].textContent.includes('Awaiting')) {
+                    log.innerHTML = '';
+                }
+                
+                const div = document.createElement('div');
+                let classes = "px-3 py-2 rounded-lg text-xs font-mono mb-1 ";
+                
+                if (type === 'log-bid') {
+                    classes += "bg-slate-100 dark:bg-black/30 text-slate-700 dark:text-slate-300 border-l-4 border-gold-400";
+                } else if (type === 'log-round') {
+                    classes += "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-gold-200 font-bold border border-slate-300 dark:border-slate-700 text-center mt-4";
+                } else if (type === 'log-result') {
+                    classes += "bg-gold-50 dark:bg-gold-900/20 text-gold-700 dark:text-gold-300 font-bold border border-gold-200 dark:border-gold-800 animate-fade-in";
+                } else {
+                    classes += "text-slate-500";
+                }
+                
+                div.className = classes;
+                div.textContent = msg;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            logFairness(msg) {
+                const log = document.getElementById('fairnessLog');
+                if(!log) return;
+                
+                const div = document.createElement('div');
+                div.className = "flex gap-2 items-start py-1 border-b border-slate-100 dark:border-slate-700 last:border-0";
+                div.innerHTML = `<span class="text-xs text-slate-400 font-mono whitespace-nowrap">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span> <span class="text-slate-700 dark:text-slate-300">${msg}</span>`;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            clearFairnessLog() { 
+                const log = document.getElementById('fairnessLog');
+                if(log) log.innerHTML = ''; 
+            }
+
+            updateStatus(msg) { 
+                const el = document.getElementById('statusBar');
+                if(el) el.innerHTML = `<span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> ${msg}`; 
+            }
 
             toggleDarkMode() {
                 document.documentElement.classList.toggle('dark');
