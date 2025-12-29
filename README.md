@@ -5,7 +5,7 @@ A real-time, multiplayer auction strategy game where players compete to win valu
 
 🎮 Play Now
 
-[Click here to test the Simulator!]
+[Click here to test the Simulator!](https://aryanthecuber.github.io/Auction-Bidding-Simulator/)
 
 ✨ Features
 
