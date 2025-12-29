@@ -639,6 +639,14 @@
                                 this.auth.signOut();
                                 return; // Listener will trigger again with null
                             }
+
+                            // Show login button if not logged in
+                            const authSec = document.getElementById('googleAuthSection');
+                            const multiBtns = document.getElementById('multiplayerButtons');
+                            if(authSec && multiBtns) {
+                                authSec.classList.remove('hidden');
+                                multiBtns.classList.add('hidden');
+                            }
                         }
                     });
 
@@ -1757,6 +1765,71 @@
                 });
                 
                 document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
+            }
+
+            updateLeaderboard() {
+                const tbody = document.getElementById('leaderboardBody');
+                if(!tbody) return;
+                tbody.innerHTML = '';
+                
+                this.state.players.forEach(p => {
+                    const wins = this.state.roundResults.filter(r => r[2] === p).length;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="p-3 font-medium">${p}</td>
+                        <td class="p-3 text-center">${wins}</td>
+                        <td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[p] || 0)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            addLog(msg, type = 'normal') {
+                const log = document.getElementById('auctionLog');
+                if(!log) return;
+                
+                if (log.children.length === 1 && log.children[0].textContent.includes('Awaiting')) {
+                    log.innerHTML = '';
+                }
+                
+                const div = document.createElement('div');
+                let classes = "px-3 py-2 rounded-lg text-xs font-mono mb-1 ";
+                
+                if (type === 'log-bid') {
+                    classes += "bg-slate-100 dark:bg-black/30 text-slate-700 dark:text-slate-300 border-l-4 border-gold-400";
+                } else if (type === 'log-round') {
+                    classes += "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-gold-200 font-bold border border-slate-300 dark:border-slate-700 text-center mt-4";
+                } else if (type === 'log-result') {
+                    classes += "bg-gold-50 dark:bg-gold-900/20 text-gold-700 dark:text-gold-300 font-bold border border-gold-200 dark:border-gold-800 animate-fade-in";
+                } else {
+                    classes += "text-slate-500";
+                }
+                
+                div.className = classes;
+                div.textContent = msg;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            logFairness(msg) {
+                const log = document.getElementById('fairnessLog');
+                if(!log) return;
+                
+                const div = document.createElement('div');
+                div.className = "flex gap-2 items-start py-1 border-b border-slate-100 dark:border-slate-700 last:border-0";
+                div.innerHTML = `<span class="text-xs text-slate-400 font-mono whitespace-nowrap">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span> <span class="text-slate-700 dark:text-slate-300">${msg}</span>`;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            clearFairnessLog() { 
+                const log = document.getElementById('fairnessLog');
+                if(log) log.innerHTML = ''; 
+            }
+
+            updateStatus(msg) { 
+                const el = document.getElementById('statusBar');
+                if(el) el.innerHTML = `<span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> ${msg}`; 
             }
 
             // --- MISSING METHODS RESTORED BELOW ---
