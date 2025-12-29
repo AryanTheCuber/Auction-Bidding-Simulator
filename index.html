@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auction Bidding Simulator</title>
+    <title>🔥 Ultimate Auction Simulator</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -166,7 +167,7 @@
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-700 via-gold-400 to-gold-700 opacity-80"></div>
             
             <div class="container mx-auto px-4 py-6 relative z-10">
-                <div class="flex flex-col xl:flex-row justify-between items-center gap-6">
+                <div class="flex flex-col lg:flex-row justify-between items-center gap-6">
                     <div>
                         <div class="flex items-center gap-4">
                             <button onclick="window.gameController.exitToMenu()" class="text-xs uppercase font-bold text-slate-500 hover:text-gold-400 transition-colors">← Menu</button>
@@ -177,7 +178,7 @@
                         <p class="text-slate-400 mt-1 font-medium text-sm uppercase tracking-widest pl-14">Premium Bidding Engine</p>
                     </div>
                     
-                    <div class="flex flex-col gap-3 w-full xl:w-auto">
+                    <div class="flex flex-col gap-3 w-full lg:w-auto">
                         <!-- Single Player Setup Controls -->
                         <div id="singlePlayerControls" class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-gold-500/20 flex flex-col md:flex-row gap-3 items-end shadow-lg hidden">
                             <div class="flex flex-col gap-1 w-full md:w-auto">
@@ -192,14 +193,14 @@
                             </div>
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Opponent Bot</label>
-                                <select id="spBotSelect" class="w-full md:w-40 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                                <select id="spBotSelect" class="w-full md:w-48 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
                                     <option value="Incremental">Incremental (Standard)</option>
                                     <option value="Aggressive">Aggressive (Risky)</option>
                                     <option value="Conservative">Conservative (Safe)</option>
-                                    <option value="Passive">Passive (Slow)</option>
+                                    <option value="Passive">Passive (Low Activity)</option>
                                     <option value="Adaptive">Adaptive (Smart)</option>
                                     <option value="Sniper">Sniper (Last Second)</option>
-                                    <option value="Rapid">Rapid (Spammer)</option>
+                                    <option value="Rapid">Rapid (Fast Bidder)</option>
                                 </select>
                             </div>
                             <button onclick="window.gameController.startSinglePlayerGame()" class="w-full md:w-auto px-6 py-2 h-[38px] bg-gradient-to-b from-gold-400 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black font-bold rounded-lg shadow-lg hover:shadow-gold-500/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
@@ -398,6 +399,39 @@
         </div>
     </div>
 
+    <!-- Victory Modal -->
+    <div id="victoryModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-md transition-opacity opacity-0 pointer-events-none">
+        <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-lg mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative">
+            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent"></div>
+            <div class="p-8 text-center relative z-10">
+                <div class="text-6xl mb-4 animate-bounce">🏆</div>
+                <h2 class="text-4xl font-black text-gold-500 mb-2">WINNER!</h2>
+                <h3 id="winnerName" class="text-3xl font-bold text-slate-800 dark:text-white mb-6">Player Name</h3>
+                
+                <div class="bg-slate-50 dark:bg-black/40 rounded-xl p-4 mb-6 border border-slate-200 dark:border-slate-800">
+                    <div class="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="block text-slate-400 text-xs font-bold uppercase">Wins</span>
+                            <span id="winnerWins" class="text-xl font-bold text-slate-800 dark:text-white">0</span>
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-xs font-bold uppercase">Purse Left</span>
+                            <span id="winnerPurse" class="text-xl font-bold text-emerald-500">₹0</span>
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-xs font-bold uppercase">Efficiency</span>
+                            <span class="text-xl font-bold text-gold-500">S+</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="window.gameController.closeVictoryModal()" class="w-full px-6 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
+                    Continue to Lobby
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- AI Config Modal -->
     <div id="aiModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none">
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform scale-95 transition-transform duration-300 border border-slate-200 dark:border-gold-500/30 overflow-hidden">
@@ -429,12 +463,54 @@
         </div>
     </div>
 
+    <!-- Add AI Bot Modal (SP) -->
+    <div id="addAIModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none">
+        <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform scale-95 transition-transform duration-300 border border-slate-200 dark:border-gold-500/30 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="bg-gold-100 text-gold-700 p-2 rounded-lg dark:bg-gold-900/20 dark:text-gold-400">🤖</span>
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-white">Create AI Bot</h2>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Bot Name</label>
+                        <input type="text" id="newAIName" placeholder="AI_Bot1" class="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-white focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Starting Purse (₹)</label>
+                        <input type="number" id="newAIPurse" value="10000" class="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-white focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Strategy</label>
+                        <select id="newAIStrategy" class="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-white focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                            <option>Incremental</option>
+                            <option>Aggressive</option>
+                            <option>Conservative</option>
+                            <option>Passive</option>
+                            <option>Adaptive</option>
+                            <option>Sniper</option>
+                            <option>Rapid</option>
+                        </select>
+                    </div>
+                    <label class="flex items-center gap-3 mt-2">
+                        <input type="checkbox" id="newAIActive" checked class="w-4 h-4 text-gold-600 rounded focus:ring-gold-500 bg-gray-100 dark:bg-black border-gray-300 dark:border-gray-600">
+                        <span class="text-sm text-slate-600 dark:text-slate-400">Activate immediately</span>
+                    </label>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <button onclick="window.gameController.closeAddAIModal()" class="px-4 py-3 bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 rounded-xl font-bold transition-colors">Cancel</button>
+                    <button onclick="window.gameController.createAIBot()" class="px-4 py-3 bg-gradient-to-r from-gold-500 to-yellow-600 text-black hover:shadow-lg hover:from-gold-400 hover:to-yellow-500 rounded-xl font-bold transition-all">Create Bot</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         class GameController {
             constructor() {
                 this.MAX_PLAYERS = 10;
                 this.MAX_ROUNDS = 10;
-                this.ROUND_DURATION = 60;
+                this.ROUND_DURATION = 60; // Default
                 this.ANTI_SNIPING_WINDOW = 5;
                 this.ANTI_SNIPING_EXTENSION = 10;
                 this.ANTI_SPAM_SECONDS = 2;
@@ -450,7 +526,7 @@
                 ];
 
                 this.state = {
-                    players: [], purses: {}, startingPurses: {}, numRounds: 0, currentRound: 0,
+                    players: [], purses: {}, startingPurses: {}, numRounds: 5, currentRound: 0,
                     currentItem: null, highestBid: 0, highestBidder: null, lastBidder: null,
                     bidHistory: [], perRoundPlayerBids: {}, perPlayerLastBidTime: {}, suspiciousBids: [],
                     roundResults: [], timerRunning: false, roundTimeLeft: 0, roundEndTime: 0,
@@ -481,10 +557,6 @@
             async initializeFirebase() {
                 // ==================================================================================
                 // ⚠️ IMPORTANT: YOU MUST REPLACE THIS CONFIG WITH YOUR OWN FROM FIREBASE CONSOLE ⚠️
-                // 1. Go to Firebase Console > Project Settings > General
-                // 2. Scroll to "Your Apps" > "SDK Setup and Configuration"
-                // 3. Select "Config" and copy the object to replace the one below.
-                // ==================================================================================
                 const fallbackConfig = {
                     apiKey: "AIzaSyDfrW6SMExgRnHjSM5bfCyQ4tRuBKIydqQ", // REPLACE THIS
                     authDomain: "auction-bidding-simulator.firebaseapp.com", // REPLACE THIS
@@ -701,6 +773,7 @@
                         started: false,
                         currentRound: 0,
                         numRounds: 5,
+                        roundTime: 60, // Default time
                         roundStatus: 'waiting'
                     },
                     createdAt: Date.now()
@@ -766,17 +839,44 @@
                     
                     if (roomInfoDiv) {
                         roomInfoDiv.classList.remove('hidden');
+                        
+                        let settingsHtml = '';
+                        if (this.isHost) {
+                            settingsHtml = `
+                                <div class="mt-2 grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="text-[10px] uppercase font-bold text-slate-400">Rounds</label>
+                                        <input type="number" id="hostRounds" value="5" min="1" max="10" 
+                                            class="w-full bg-black/40 border border-white/10 text-white text-xs rounded p-1 text-center">
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] uppercase font-bold text-slate-400">Seconds</label>
+                                        <input type="number" id="hostTime" value="60" min="10" max="300" 
+                                            class="w-full bg-black/40 border border-white/10 text-white text-xs rounded p-1 text-center">
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            settingsHtml = `
+                                <div class="mt-2 text-xs text-slate-400 italic text-center">
+                                    Waiting for Host to start...
+                                </div>
+                            `;
+                        }
+
                         roomInfoDiv.innerHTML = `
-                            <div class="flex items-center gap-4 bg-white/5 p-3 rounded-lg border border-gold-500/20">
-                                <div class="flex flex-col">
-                                    <span class="text-xs text-gold-400 uppercase font-bold">Room Code</span>
-                                    <span class="text-lg font-mono font-bold text-white tracking-wider select-all">${this.currentRoom}</span>
+                            <div class="flex flex-col gap-2 bg-white/5 p-3 rounded-lg border border-gold-500/20">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs text-gold-400 uppercase font-bold">Room Code</span>
+                                        <span class="text-lg font-mono font-bold text-white tracking-wider select-all">${this.currentRoom}</span>
+                                    </div>
+                                    <div class="flex flex-col text-right">
+                                        <span class="text-xs text-gold-400 uppercase font-bold">Role</span>
+                                        <span class="text-sm font-bold text-white">${this.isHost ? '👑 Host' : '👤 Player'}</span>
+                                    </div>
                                 </div>
-                                <div class="h-8 w-px bg-white/10"></div>
-                                <div class="flex flex-col">
-                                    <span class="text-xs text-gold-400 uppercase font-bold">Role</span>
-                                    <span class="text-sm font-bold text-white">${this.isHost ? '👑 Host' : '👤 Player'}</span>
-                                </div>
+                                ${settingsHtml}
                             </div>
                         `;
                     }
@@ -801,6 +901,14 @@
 
                 this.roomRef.child('players').on('value', snapshot => {
                     const playersData = snapshot.val() || {};
+                    
+                    // Check if I was kicked
+                    if (this.multiplayerMode && this.currentPlayerName && !playersData[this.currentPlayerName]) {
+                        alert("You have been removed from the room by the host.");
+                        this.exitToMenu();
+                        return;
+                    }
+
                     const onlinePlayers = Object.values(playersData).filter(p => p.online);
                     
                     document.getElementById('playerCountBadge').textContent = `${onlinePlayers.length} Active`;
@@ -839,6 +947,14 @@
                         this.handleRemoteBid(bid);
                     }
                 });
+            }
+
+            kickPlayer(playerName) {
+                if (!this.isHost || !this.roomRef) return;
+                if (confirm(`Are you sure you want to kick ${playerName}?`)) {
+                    this.roomRef.child('players').child(playerName).remove();
+                    this.logFairness(`🚫 Host kicked ${playerName}`);
+                }
             }
 
             syncNewRound(gameState) {
@@ -995,7 +1111,6 @@
             }
 
             startTournament() {
-                // This is now primarily for multiplayer host start
                 if (this.multiplayerMode && !this.isHost) {
                     alert('Only the host can start the tournament!');
                     return;
@@ -1006,7 +1121,16 @@
                     return;
                 }
 
-                this.state.numRounds = 5;
+                if (this.multiplayerMode && this.isHost) {
+                    // Grab host settings
+                    const rounds = parseInt(document.getElementById('hostRounds').value) || 5;
+                    const time = parseInt(document.getElementById('hostTime').value) || 60;
+                    this.state.numRounds = rounds;
+                    this.ROUND_DURATION = time;
+                } else {
+                    this.state.numRounds = 5;
+                }
+
                 this.state.currentRound = 0;
                 this.state.roundResults = [];
                 this.state.bidHistory = [];
@@ -1078,7 +1202,7 @@
                     
                     const now = Date.now();
                     if (!this.state.roundEndTime || isNaN(this.state.roundEndTime)) {
-                        this.state.roundEndTime = Date.now() + 60000;
+                        this.state.roundEndTime = Date.now() + (this.ROUND_DURATION * 1000);
                     }
                     
                     const diff = Math.ceil((this.state.roundEndTime - now) / 1000);
@@ -1384,61 +1508,34 @@
 
                 // Strategy Timing/Skip Logic
                 if (strategy === 'Sniper' && timeLeft > 8) {
-                    // Wait until end
-                    this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 1000);
-                    return;
-                }
-
-                if (strategy === 'Passive' && Math.random() < 0.7) {
-                    // Rarely bids
-                    this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000);
-                    return;
-                }
-                
-                if (Math.random() < 0.15 && strategy !== 'Rapid') { 
-                    // Random hesitation for non-rapid bots
-                    this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000); 
+                    this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 1000); 
                     return; 
                 }
                 
-                // Calculate Bid Amount
-                let bid = cur + this.state.minIncrement;
-                
-                if (strategy === 'Aggressive') {
-                    bid += basePrice * 0.1;
-                } else if (strategy === 'Whale') { // Keep legacy support
-                    bid += basePrice * 0.25;
-                } else if (strategy === 'Adaptive') {
-                    // Randomly aggressive or conservative
-                    if (Math.random() > 0.5) bid += basePrice * 0.05;
-                }
-                
-                // Conservative check: don't overpay too much relative to base
-                if (strategy === 'Conservative' && bid > basePrice * 2.5) {
+                if (strategy === 'Passive' && Math.random() < 0.4) {
                      this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000); 
                      return;
                 }
 
-                // Funds Check
+                if (strategy !== 'Rapid' && Math.random() < 0.15) { 
+                    this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000); 
+                    return; 
+                }
+                
+                let bid = cur + this.state.minIncrement;
+                if (strategy === 'Aggressive') bid += basePrice * 0.1;
+                
                 if (bid > purse) {
-                    if (purse > cur + this.state.minIncrement) {
-                        bid = purse; // All in
+                    if (purse > cur) {
+                        bid = purse;
                     } else { 
-                        // Broke
-                        this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000); 
+                        this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000); 
                         return; 
                     }
                 }
                 
-                // Place Bid
                 this.placeBid(player, bid, false);
-                
-                // Next Bid Delay
-                let delay = 3000 + Math.random() * 2000;
-                if (strategy === 'Rapid') delay = 1000 + Math.random() * 1000;
-                if (strategy === 'Sniper') delay = 500; // Fast checks at end
-                
-                this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), delay);
+                this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000 + Math.random() * 2000);
             }
 
             activateAIForPlayer(player, strategy) {
@@ -1459,12 +1556,53 @@
             }
 
             showFinalResults() {
-                let message = 'Final Results:\n\n';
-                this.state.roundResults.forEach(([round, item, winner, amount]) => {
-                    message += `Round ${round}: ${item} - ${winner} at ₹${amount.toFixed(2)}\n`;
+                // Find winner based on most wins, then highest purse
+                let scores = {};
+                this.state.players.forEach(p => scores[p] = { wins: 0, purse: this.state.purses[p] });
+                
+                this.state.roundResults.forEach(r => {
+                    if (scores[r[2]]) scores[r[2]].wins++;
                 });
-                alert(message);
-                this.addLog('\n=== Tournament Summary ===', 'log-round');
+
+                const sorted = Object.entries(scores).sort((a, b) => {
+                    if (b[1].wins !== a[1].wins) return b[1].wins - a[1].wins;
+                    return b[1].purse - a[1].purse;
+                });
+
+                if (sorted.length > 0) {
+                    const winner = sorted[0];
+                    const winnerName = winner[0];
+                    const winnerStats = winner[1];
+
+                    // TRIGGER CONFETTI
+                    var duration = 5 * 1000;
+                    var animationEnd = Date.now() + duration;
+                    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+                    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+                    var interval = setInterval(function() {
+                        var timeLeft = animationEnd - Date.now();
+                        if (timeLeft <= 0) return clearInterval(interval);
+                        var particleCount = 50 * (timeLeft / duration);
+                        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                    }, 250);
+
+                    // Show Modal
+                    document.getElementById('victoryModal').classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+                    document.getElementById('victoryModal').classList.add('flex', 'opacity-100', 'pointer-events-auto');
+                    
+                    document.getElementById('winnerName').textContent = winnerName;
+                    document.getElementById('winnerWins').textContent = winnerStats.wins;
+                    document.getElementById('winnerPurse').textContent = `₹${Math.floor(winnerStats.purse)}`;
+                }
+            }
+
+            closeVictoryModal() {
+                document.getElementById('victoryModal').classList.add('hidden', 'opacity-0', 'pointer-events-none');
+                document.getElementById('victoryModal').classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+                if (this.multiplayerMode) this.exitToMenu();
             }
 
             renderPlayers() {
@@ -1473,7 +1611,7 @@
 
                 this.state.players.forEach(player => {
                     const isWithdrawn = this.state.withdrawnPlayers[player];
-                    const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : (player === this.currentPlayerName || this.currentPlayerName === null);
+                    const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : true;
                     const isWinning = player === this.state.highestBidder;
                     const isAI = this.state.aiPlayers[player]?.active;
 
@@ -1489,6 +1627,19 @@
                     
                     const aiBadge = isAI ? 
                         `<span class="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-md dark:bg-slate-700 dark:text-slate-300">BOT</span>` : '';
+
+                    // HOST CONTROLS - KICK BUTTON
+                    let hostActions = '';
+                    if (this.isHost && this.multiplayerMode && player !== this.currentPlayerName) {
+                        hostActions = `
+                            <button onclick="window.gameController.kickPlayer('${player}')" title="Kick Player" 
+                                class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 hover:bg-rose-100 p-1 rounded transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        `;
+                    }
 
                     let controlsHtml = '';
                     if (isMe) {
@@ -1510,7 +1661,7 @@
                                 <button onclick="window.gameController.quickBid('${player}', 'max')" class="py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors" ${isWithdrawn ? 'disabled' : ''}>Max</button>
                             </div>
                             <div class="flex gap-2 mt-1">
-                                <button onclick="window.gameController.openAIConfig('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">⚙ Auto-Bid</button>
+                                <button onclick="window.gameController.openAIConfig('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">⚙ AI</button>
                                 <button onclick="window.gameController.toggleWithdraw('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">
                                     ${isWithdrawn ? 'Rejoin' : 'Withdraw'}
                                 </button>
@@ -1522,6 +1673,7 @@
 
                     div.innerHTML = `
                         ${winningBadge}
+                        ${hostActions}
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-black flex items-center justify-center text-gold-400 font-bold text-xs shadow-sm ring-1 ring-gold-500/20">
@@ -1542,164 +1694,7 @@
                     panel.appendChild(div);
                 });
                 
-                if (this.multiplayerMode) {
-                    document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
-                }
-            }
-
-            updateLeaderboard() {
-                const tbody = document.getElementById('leaderboardBody');
-                if(!tbody) return;
-                tbody.innerHTML = '';
-                
-                this.state.players.forEach(p => {
-                    const wins = this.state.roundResults.filter(r => r[2] === p).length;
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="p-3 font-medium">${p}</td>
-                        <td class="p-3 text-center">${wins}</td>
-                        <td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[p] || 0)}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
-
-            addLog(msg, type = 'normal') {
-                const log = document.getElementById('auctionLog');
-                if(!log) return;
-                
-                if (log.children.length === 1 && log.children[0].textContent.includes('Awaiting')) {
-                    log.innerHTML = '';
-                }
-                
-                const div = document.createElement('div');
-                let classes = "px-3 py-2 rounded-lg text-xs font-mono mb-1 ";
-                
-                if (type === 'log-bid') {
-                    classes += "bg-slate-100 dark:bg-black/30 text-slate-700 dark:text-slate-300 border-l-4 border-gold-400";
-                } else if (type === 'log-round') {
-                    classes += "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-gold-200 font-bold border border-slate-300 dark:border-slate-700 text-center mt-4";
-                } else if (type === 'log-result') {
-                    classes += "bg-gold-50 dark:bg-gold-900/20 text-gold-700 dark:text-gold-300 font-bold border border-gold-200 dark:border-gold-800 animate-fade-in";
-                } else {
-                    classes += "text-slate-500";
-                }
-                
-                div.className = classes;
-                div.textContent = msg;
-                log.appendChild(div);
-                log.scrollTop = log.scrollHeight;
-            }
-
-            logFairness(msg) {
-                const log = document.getElementById('fairnessLog');
-                if(!log) return;
-                
-                const div = document.createElement('div');
-                div.className = "flex gap-2 items-start py-1 border-b border-slate-100 dark:border-slate-700 last:border-0";
-                div.innerHTML = `<span class="text-xs text-slate-400 font-mono whitespace-nowrap">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</span> <span class="text-slate-700 dark:text-slate-300">${msg}</span>`;
-                log.appendChild(div);
-                log.scrollTop = log.scrollHeight;
-            }
-
-            clearFairnessLog() { 
-                const log = document.getElementById('fairnessLog');
-                if(log) log.innerHTML = ''; 
-            }
-
-            updateStatus(msg) { 
-                const el = document.getElementById('statusBar');
-                if(el) el.innerHTML = `<span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> ${msg}`; 
-            }
-
-            toggleDarkMode() {
-                document.documentElement.classList.toggle('dark');
-                localStorage.setItem('darkMode', 
-                    document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
-            }
-
-            showAddAIModal() { 
-                const m = document.getElementById('addAIModal'); 
-                if(!m) return;
-                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
-                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
-                
-                const count = this.state.players.filter(p => p.startsWith('AI_Bot')).length;
-                const nameInput = document.getElementById('newAIName');
-                if(nameInput) nameInput.value = `AI_Bot${count + 1}`;
-            }
-
-            closeAddAIModal() { 
-                const m = document.getElementById('addAIModal'); 
-                if(!m) return;
-                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
-                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
-            }
-
-            openAIConfig(player) {
-                this.state.currentAIPlayer = player;
-                const m = document.getElementById('aiModal'); 
-                if(!m) return;
-                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
-                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
-                
-                const ai = this.state.aiPlayers[player];
-                const stratEl = document.getElementById('aiStrategy');
-                const activeEl = document.getElementById('aiActive');
-                
-                if(stratEl) stratEl.value = ai ? ai.strategy : 'Incremental';
-                if(activeEl) activeEl.checked = ai ? ai.active : false;
-            }
-
-            closeAIModal() {
-                const m = document.getElementById('aiModal'); 
-                if(!m) return;
-                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
-                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
-                this.state.currentAIPlayer = null;
-            }
-
-            createAIBot() {
-                const name = document.getElementById('newAIName').value.trim();
-                const purse = parseFloat(document.getElementById('newAIPurse').value);
-                const strategy = document.getElementById('newAIStrategy').value;
-                const active = document.getElementById('newAIActive').checked;
-                
-                if(!name || isNaN(purse)) {
-                    alert('Invalid Input');
-                    return;
-                }
-                
-                if(this.state.players.includes(name)) {
-                    alert('Name exists');
-                    return;
-                }
-                
-                this.state.players.push(name);
-                this.state.purses[name] = purse;
-                
-                if(active) {
-                    this.activateAIForPlayer(name, strategy);
-                }
-                
-                this.renderPlayers();
-                this.updateLeaderboard();
-                this.closeAddAIModal();
-            }
-
-            applyAIConfig() {
-                const p = this.state.currentAIPlayer;
-                const s = document.getElementById('aiStrategy').value;
-                const a = document.getElementById('aiActive').checked;
-                
-                if(a) {
-                    this.activateAIForPlayer(p, s);
-                } else {
-                    this.stopAIForPlayer(p);
-                }
-                
-                this.closeAIModal();
-                this.renderPlayers();
+                document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
             }
         }
 
