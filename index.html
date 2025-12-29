@@ -247,10 +247,16 @@
                             <div class="text-xs text-slate-500">Enable to bid, disable to spectate only.</div>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="hostParticipate" class="sr-only peer" checked>
+                            <input type="checkbox" id="hostParticipate" class="sr-only peer" checked onchange="window.gameController.toggleHostPurseInput()">
                             <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
                         </label>
                     </div>
+                </div>
+
+                <!-- Host Purse Input (New) -->
+                <div id="hostPurseContainer">
+                    <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Purse (₹)</label>
+                    <input type="number" id="hostPurseInput" value="50000" min="1000" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none">
                 </div>
 
                 <!-- Setup Tabs -->
@@ -454,7 +460,6 @@
                         </div>
                     </div>
 
-                    <!-- Log Panel (Same as before) -->
                     <div class="flex-1 flex flex-col bg-white dark:bg-dark-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden min-h-[400px]">
                         <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-black/20 flex justify-between items-center">
                             <h2 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
@@ -485,7 +490,7 @@
                 </section>
 
                 <section class="lg:col-span-3 flex flex-col gap-6">
-                    <!-- Right panels (Security/AI/Tips/Leaderboard) -->
+                    
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-md border-l-4 border-slate-500 dark:border-slate-400 overflow-hidden">
                         <div class="p-3 bg-slate-100 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
                             <h2 class="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2">
@@ -494,7 +499,7 @@
                         </div>
                         <div id="fairnessLog" class="p-3 h-32 overflow-y-auto text-xs text-slate-600 dark:text-slate-400 space-y-1 custom-scrollbar"></div>
                     </div>
-                    <!-- Strategy Panel -->
+
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-md border-l-4 border-gold-500 overflow-hidden">
                         <div class="p-3 bg-gold-50 dark:bg-gold-900/10 border-b border-gold-100 dark:border-gold-900/20">
                             <h2 class="font-bold text-gold-800 dark:text-gold-400 text-sm flex items-center gap-2">
@@ -503,7 +508,7 @@
                         </div>
                         <div id="strategyPanel" class="p-3 overflow-y-auto h-32 text-xs space-y-2 custom-scrollbar"></div>
                     </div>
-                    <!-- Suggestions Panel -->
+
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-md border-l-4 border-slate-400 dark:border-slate-600 overflow-hidden">
                         <div class="p-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
                             <h2 class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center gap-2">
@@ -512,7 +517,7 @@
                         </div>
                         <div id="suggestionsPanel" class="p-3 overflow-y-auto h-32 text-xs space-y-2 custom-scrollbar"></div>
                     </div>
-                    <!-- Leaderboard -->
+
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
                         <div class="p-3 bg-slate-50 dark:bg-black/30 border-b border-slate-200 dark:border-slate-800">
                             <h2 class="font-bold text-slate-700 dark:text-slate-200 text-sm">🏅 Top Bidders</h2>
@@ -531,6 +536,7 @@
                             </table>
                         </div>
                     </div>
+
                 </section>
             </div>
         </main>
@@ -731,14 +737,20 @@
             }
 
             async initializeFirebase() {
+                // ==================================================================================
+                // ⚠️ IMPORTANT: YOU MUST REPLACE THIS CONFIG WITH YOUR OWN FROM FIREBASE CONSOLE ⚠️
+                // 1. Go to Firebase Console > Project Settings > General
+                // 2. Scroll to "Your Apps" > "SDK Setup and Configuration"
+                // 3. Select "Config" and copy the object to replace the one below.
+                // ==================================================================================
                 const fallbackConfig = {
-                    apiKey: "AIzaSyDfrW6SMExgRnHjSM5bfCyQ4tRuBKIydqQ", 
-                    authDomain: "auction-bidding-simulator.firebaseapp.com",
-                    databaseURL: "https://auction-bidding-simulator-default-rtdb.firebaseio.com",
-                    projectId: "auction-bidding-simulator",
-                    storageBucket: "auction-bidding-simulator.firebasestorage.app",
-                    messagingSenderId: "97454594868",
-                    appId: "1:97454594868:web:7a50a5f1c8c39fceba2361"
+                    apiKey: "AIzaSyDfrW6SMExgRnHjSM5bfCyQ4tRuBKIydqQ", // REPLACE THIS
+                    authDomain: "auction-bidding-simulator.firebaseapp.com", // REPLACE THIS
+                    databaseURL: "https://auction-bidding-simulator-default-rtdb.firebaseio.com", // REPLACE THIS
+                    projectId: "auction-bidding-simulator", // REPLACE THIS
+                    storageBucket: "auction-bidding-simulator.firebasestorage.app", // REPLACE THIS
+                    messagingSenderId: "97454594868", // REPLACE THIS
+                    appId: "1:97454594868:web:7a50a5f1c8c39fceba2361" // REPLACE THIS
                 };
 
                 try {
@@ -752,16 +764,29 @@
                     this.database = firebase.database();
 
                     this.auth.onAuthStateChanged((user) => {
+                        // Strict check: User must exist AND NOT be anonymous
                         if (user && !user.isAnonymous) {
                             console.log("✅ Auth Ready (Google):", user.uid);
                             this.firebaseInitialized = true;
+                            
+                            // If user logs in while in multiplayer flow, auto-advance to lobby
                             if (this.inMultiplayerFlow) {
                                 this.showLobby();
                             }
                         } else {
+                            // If user is anonymous, Force Sign Out to clear cached session
                             if (user && user.isAnonymous) {
+                                console.log("Cleaning up anonymous session to force Google Login...");
                                 this.auth.signOut();
-                                return;
+                                return; // Listener will trigger again with null
+                            }
+
+                            // Show login button if not logged in
+                            const authSec = document.getElementById('googleAuthSection');
+                            const multiBtns = document.getElementById('multiplayerButtons');
+                            if(authSec && multiBtns) {
+                                authSec.classList.remove('hidden');
+                                multiBtns.classList.add('hidden');
                             }
                         }
                     });
@@ -795,33 +820,52 @@
                 });
             }
 
-            // ... (keeping previous simple navigation methods instructions show/hide)
+            // Step 1: Click Button on Entry Page -> Show Instructions
             showInstructions(mode) {
                 this.selectedPendingMode = mode;
                 const modal = document.getElementById('instructionsPage');
-                // ... same as before
+                const title = document.getElementById('instructTitle');
+                const content = document.getElementById('instructContent');
+                
+                if (mode === 'single') {
+                    title.innerHTML = '<span>⚔️</span> Single Player Mission';
+                    content.innerHTML = `
+                        <p>Welcome to the solo arena! In this mode, you will test your skills against our AI trading bots.</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-4 text-sm text-slate-400">
+                            <li>You will set your starting purse and choose an opponent.</li>
+                            <li>Bidding is strategic: don't exhaust your funds too early!</li>
+                            <li>The highest bidder at the end of the timer wins the item.</li>
+                            <li>Watch out for "Snipers" who bid in the last few seconds!</li>
+                        </ul>
+                    `;
+                } else {
+                    title.innerHTML = '<span>🌐</span> Multiplayer Protocol';
+                    content.innerHTML = `
+                        <p>Compete against real people in real-time!</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-4 text-sm text-slate-400">
+                            <li><strong>Create Room:</strong> Become the host and control the tournament settings.</li>
+                            <li><strong>Join Room:</strong> Enter a friend's room code to participate.</li>
+                            <li>You will need to sign in with Google to prevent identity spoofing.</li>
+                            <li>Ensure you have a stable internet connection.</li>
+                        </ul>
+                    `;
+                }
+                
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
-                
-                // Content update
-                const content = document.getElementById('instructContent');
-                if (mode === 'single') {
-                    document.getElementById('instructTitle').innerHTML = '<span>⚔️</span> Single Player Mission';
-                    content.innerHTML = `<p>Welcome to the solo arena!...</p>`;
-                } else {
-                    document.getElementById('instructTitle').innerHTML = '<span>🌐</span> Multiplayer Protocol';
-                    content.innerHTML = `<p>Compete against real people!...</p>`;
-                }
             }
 
             hideInstructions() {
-                document.getElementById('instructionsPage').classList.add('hidden');
-                document.getElementById('instructionsPage').classList.remove('flex');
+                const modal = document.getElementById('instructionsPage');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }
 
+            // Step 2: Confirm Instructions -> Branch Logic
             confirmInstructions() {
                 this.hideInstructions();
                 const mode = this.selectedPendingMode;
+
                 if (mode === 'single') {
                     this.inMultiplayerFlow = false;
                     this.startSinglePlayerSetup();
@@ -831,23 +875,35 @@
                 }
             }
 
-            // ... (setup methods startSinglePlayerSetup, checkLogin, showLogin, showLobby, transitionToMainApp, exitToMenu, generateRoomCode)
-            // THESE REMAIN UNCHANGED FROM PREVIOUS VERSION BUT INCLUDED FOR COMPLETENESS IN LOGIC
-            
+            // START Single Player Setup (Shows Main App directly)
             startSinglePlayerSetup() {
-                document.getElementById('entryPage').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('animate-fade-in');
+                const entryPage = document.getElementById('entryPage');
+                const mainApp = document.getElementById('mainApp');
+                const singleControls = document.getElementById('singlePlayerControls');
+                const multiControls = document.getElementById('multiplayerStatus');
+                const badge = document.getElementById('playerCountBadge');
+
+                entryPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                mainApp.classList.add('animate-fade-in');
+
                 this.multiplayerMode = false;
-                document.getElementById('singlePlayerControls').classList.remove('hidden');
-                document.getElementById('singlePlayerControls').classList.add('flex');
-                document.getElementById('multiplayerStatus').classList.add('hidden');
-                document.getElementById('playerCountBadge').classList.add('hidden');
+                singleControls.classList.remove('hidden');
+                singleControls.classList.add('flex');
+                multiControls.classList.add('hidden');
+                badge.classList.add('hidden');
             }
 
+            // Check Login for Multiplayer
             checkLoginAndShowLobby() {
                 const user = this.auth ? this.auth.currentUser : null;
-                if (user && !user.isAnonymous) { this.showLobby(); } else { this.showLogin(); }
+                const isLoggedIn = user && !user.isAnonymous;
+
+                if (isLoggedIn) {
+                    this.showLobby();
+                } else {
+                    this.showLogin();
+                }
             }
 
             showLogin() {
@@ -859,7 +915,9 @@
             showLobby() {
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('loginPage').classList.remove('flex');
-                document.getElementById('entryPage').classList.add('hidden');
+                
+                document.getElementById('entryPage').classList.add('hidden'); // Ensure entry is gone
+                
                 document.getElementById('lobbyPage').classList.remove('hidden');
                 document.getElementById('lobbyPage').classList.add('flex');
             }
@@ -867,22 +925,20 @@
             transitionToMainApp() {
                 document.getElementById('lobbyPage').classList.add('hidden');
                 document.getElementById('lobbyPage').classList.remove('flex');
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('animate-fade-in');
+
+                const mainApp = document.getElementById('mainApp');
+                const singleControls = document.getElementById('singlePlayerControls');
+                const multiControls = document.getElementById('multiplayerStatus');
+                const badge = document.getElementById('playerCountBadge');
+
+                mainApp.classList.remove('hidden');
+                mainApp.classList.add('animate-fade-in');
+
                 this.multiplayerMode = true;
-                document.getElementById('singlePlayerControls').classList.add('hidden');
-                document.getElementById('singlePlayerControls').classList.remove('flex');
-                document.getElementById('multiplayerStatus').classList.remove('hidden');
-                document.getElementById('playerCountBadge').classList.remove('hidden');
-                
-                // Show/Hide Ready Buttons based on role
-                if (this.isHost) {
-                    document.getElementById('multiplayerStartBtn').classList.remove('hidden');
-                    document.getElementById('readyCheckArea').classList.add('hidden');
-                } else {
-                    document.getElementById('multiplayerStartBtn').classList.add('hidden');
-                    document.getElementById('readyCheckArea').classList.remove('hidden');
-                }
+                singleControls.classList.add('hidden');
+                singleControls.classList.remove('flex');
+                multiControls.classList.remove('hidden');
+                badge.classList.remove('hidden');
             }
 
             exitToMenu() {
@@ -907,11 +963,24 @@
                 document.getElementById('hostSetupModal').classList.remove('hidden');
                 document.getElementById('hostSetupModal').classList.add('flex');
                 this.switchSetupTab('preset'); // Default tab
+                
+                // Initialize purse input visibility
+                this.toggleHostPurseInput();
             }
 
             closeHostSetup() {
                 document.getElementById('hostSetupModal').classList.add('hidden');
                 document.getElementById('hostSetupModal').classList.remove('flex');
+            }
+            
+            toggleHostPurseInput() {
+                const isParticipating = document.getElementById('hostParticipate').checked;
+                const container = document.getElementById('hostPurseContainer');
+                if (isParticipating) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                }
             }
 
             switchSetupTab(tab) {
@@ -951,6 +1020,15 @@
                 const participate = document.getElementById('hostParticipate').checked;
                 
                 if (!playerName) { alert("Enter a name"); return; }
+                
+                let hostPurse = 50000; // Default
+                if (participate) {
+                    hostPurse = parseFloat(document.getElementById('hostPurseInput').value);
+                    if (isNaN(hostPurse) || hostPurse <= 0) {
+                        alert("Please enter a valid purse amount.");
+                        return;
+                    }
+                }
 
                 // Gather settings
                 let rounds, time, category, customItem = null;
@@ -997,7 +1075,7 @@
                 const playersObj = {};
                 playersObj[playerName] = {
                     name: playerName,
-                    purse: participate ? 50000 : 0, 
+                    purse: participate ? hostPurse : 0, 
                     online: true,
                     joinedAt: Date.now(),
                     isSpectator: !participate,
@@ -1033,12 +1111,18 @@
                 const user = this.auth.currentUser;
                 if (!user || user.isAnonymous) { alert('Please sign in with Google first'); return; }
                 
-                const roomCode = document.getElementById('lobbyRoomCode').value || prompt('Enter Room Code:');
-                if (!roomCode) return;
+                const roomCodeInput = document.getElementById('lobbyRoomCode');
+                const roomCode = roomCodeInput ? roomCodeInput.value : prompt('Enter the Room Code:');
+                
+                if (!roomCode) { alert("Please enter a room code"); return; }
                 
                 const playerName = prompt('Enter your player name:', user.displayName || 'Guest');
                 if (!playerName) return;
                 
+                let purseInput = prompt('Enter your starting purse amount:', '50000');
+                let purseAmount = parseFloat(purseInput);
+                if (isNaN(purseAmount) || purseAmount <= 0) purseAmount = 10000;
+
                 this.currentRoom = roomCode.trim().toUpperCase();
                 this.currentPlayerName = playerName;
                 this.isHost = false;
@@ -1051,7 +1135,7 @@
                 this.roomRef.once('value').then(snapshot => {
                     if (!snapshot.exists()) {
                         alert('Room not found!');
-                        return;
+                        return; // Stay in lobby
                     }
                     // Sync initial state
                     const gs = snapshot.val().gameState;
@@ -1063,7 +1147,7 @@
 
                     this.roomRef.child('players').child(playerName).set({
                         name: playerName,
-                        purse: 50000,
+                        purse: purseAmount,
                         online: true,
                         joinedAt: Date.now(),
                         isSpectator: false,
@@ -1190,8 +1274,10 @@
 
                 this.state.players.forEach(player => {
                     const isWithdrawn = this.state.withdrawnPlayers[player];
-                    const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : true;
+                    // FIX: In SP, isMe is true only if player matches current name.
+                    const isMe = (player === this.currentPlayerName); 
                     const isWinning = player === this.state.highestBidder;
+                    const isAI = this.state.aiPlayers[player]?.active;
                     
                     // Flags
                     let isSpectator = false;
@@ -1214,9 +1300,12 @@
                     const winningBadge = isWinning ? 
                         `<span class="absolute -top-3 -right-2 bg-gradient-to-r from-gold-500 to-yellow-600 text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-sm animate-bounce">LEADING</span>` : '';
                     
+                    const aiBadge = isAI ? 
+                        `<span class="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-md dark:bg-slate-700 dark:text-slate-300">BOT</span>` : '';
+
                     // Ready Status Icon
                     let statusIcon = '';
-                    if (!isSpectator && !isHost) {
+                    if (!isSpectator && !isHost && !isAI) { // Don't show ready for bots/host
                         statusIcon = isReady 
                             ? `<span class="text-emerald-500 text-lg" title="Ready">✅</span>` 
                             : `<span class="text-rose-500 text-lg animate-pulse" title="Not Ready">⏳</span>`;
@@ -1268,6 +1357,7 @@
                                     <h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-tight flex items-center gap-1">
                                         ${player} ${statusIcon}
                                     </h4>
+                                    <div class="flex gap-1">${aiBadge}</div>
                                 </div>
                             </div>
                             <div class="text-right">
