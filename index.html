@@ -1341,6 +1341,15 @@
                         this.state.highestBidder = gameState.highestBidder;
                         this.state.highestBid = gameState.highestBid;
                         this.endRound(true);
+                    } else if (gameState.timerRunning && this.state.timerRunning) {
+                        // SYNC TIMER UPDATE (e.g. Anti-Sniping)
+                        const now = Date.now();
+                        const serverRemaining = Math.ceil((gameState.roundEndTime - now) / 1000);
+                        // Only sync if significant drift or extension
+                        if (Math.abs(serverRemaining - this.state.roundTimeLeft) > 2) {
+                            this.state.roundTimeLeft = serverRemaining > 0 ? serverRemaining : 0;
+                            this.updateStatus("⏱ Timer Synced!");
+                        }
                     }
                 });
 
@@ -1829,6 +1838,7 @@
                     }
 
                     if (this.state.roundTimeLeft <= 0) {
+                        timerEl.innerText = "00:00"; // FORCE STOP ON 00:00
                         this.endRound();
                     }
                 }, 1000);
@@ -1863,6 +1873,17 @@
                 if (amount > purse) {
                     if (!isAI) this.updateStatus(`Insufficient funds! Purse: ₹${purse}`, 'error');
                     return;
+                }
+
+                // ANTI-SNIPING LOGIC (Adds 10s if bid in last 5s)
+                if (this.state.roundTimeLeft <= 5) {
+                    this.state.roundTimeLeft += 10;
+                    this.updateStatus("ANTI-SNIPING! +10 Seconds added.");
+                    // Host Syncs new time to all clients
+                    if (this.multiplayerMode && this.isHost) {
+                         const newEndTime = Date.now() + (this.state.roundTimeLeft * 1000);
+                         this.roomRef.child('gameState').update({ roundEndTime: newEndTime });
+                    }
                 }
 
                 // Execute Bid
@@ -1905,6 +1926,9 @@
             }
 
             endRound(isRemoteTrigger = false) {
+                // PREVENT DUPLICATES: Check if this round is already processed
+                if (this.state.roundResults.some(r => r.round === this.state.currentRound)) return;
+
                 clearInterval(this.state.timerInterval);
                 this.state.timerRunning = false;
                 this.state.roundStatus = 'ended';
