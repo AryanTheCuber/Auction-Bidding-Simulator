@@ -672,7 +672,7 @@
                 this.ANTI_SNIPING_EXTENSION = 10;
                 this.ANTI_SPAM_SECONDS = 2;
                 this.UNUSUAL_MULTIPLIER = 3;
-                this.MIN_INCREMENT_RATIO = 0.20;
+                this.MIN_INCREMENT_RATIO = 0.02; // CHANGED: 2% of base price
 
                 this.CATEGORY_SETS = {
                     'Real Estate': [
@@ -1591,6 +1591,40 @@
                 }
             }
 
+            syncNewRound(gameState) {
+                this.state.currentRound = gameState.currentRound;
+                this.state.currentItem = gameState.currentItem; // [name, price]
+                this.state.highestBid = gameState.highestBid;
+                this.state.highestBidder = gameState.highestBidder;
+                this.state.roundStatus = gameState.roundStatus;
+                
+                // Recalculate min increment based on base price (item price) - 2% logic
+                this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
+
+                document.getElementById('itemName').innerText = this.state.currentItem[0];
+                const descEl = document.getElementById('itemDesc');
+                if (descEl && gameState.customItem) descEl.textContent = gameState.customItem.desc;
+                else if (descEl) descEl.textContent = "";
+
+                document.getElementById('basePrice').innerText = '₹' + this.state.currentItem[1].toLocaleString(); 
+                document.getElementById('minIncrement').innerText = '₹' + this.state.minIncrement.toLocaleString();
+                document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
+                document.getElementById('highestBidderName').innerText = this.state.highestBidder || '-';
+                document.getElementById('auctionLog').innerHTML = '';
+                
+                this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem[0]}`);
+
+                if (gameState.timerRunning) {
+                    // Sync timer
+                    const now = Date.now();
+                    const remaining = Math.ceil((gameState.roundEndTime - now) / 1000);
+                    this.state.roundTimeLeft = remaining > 0 ? remaining : 0;
+                    this.startTimer();
+                }
+                
+                this.renderPlayers();
+            }
+
             nextRound() {
                 if (this.state.currentRound >= this.state.numRounds) {
                     this.showFinalResults();
@@ -1606,7 +1640,8 @@
                 // Reset Round State
                 this.state.highestBid = this.state.currentItem[1];
                 this.state.highestBidder = null;
-                this.state.minIncrement = Math.ceil(this.state.highestBid * this.MIN_INCREMENT_RATIO);
+                // CHANGED: 2% of BASE PRICE (Initial Item Price)
+                this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                 this.state.roundStatus = 'active';
                 this.state.roundTimeLeft = this.ROUND_DURATION;
 
@@ -1667,6 +1702,12 @@
 
             placeBid(player, amountArg = null, isAI = false) {
                 if (this.state.roundStatus !== 'active') return;
+                
+                // NEW: Prevent Consecutive Bidding
+                if (player === this.state.highestBidder) {
+                    if (!isAI) this.updateStatus("You are already the highest bidder!", 'error');
+                    return;
+                }
                 
                 let amount = amountArg;
                 if (amount === null) {
