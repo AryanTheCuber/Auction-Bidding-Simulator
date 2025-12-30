@@ -61,57 +61,6 @@ Vanilla JavaScript: Handles the game loop, AI logic, and DOM manipulation.
 
 Firebase SDK: Handles authentication and real-time networking.
 
-🚀 How to Run
-
-Single Player (Offline)
-
-Clone the repository or download the index.html file.
-
-Open index.html in any modern web browser (Chrome, Firefox, Edge).
-
-Click "Single Player" to start immediately.
-
-Multiplayer (Online)
-
-Note: Due to Google Authentication security policies, Multiplayer features will not work if you open the file directly via file://. You must serve it via a local HTTP server.
-
-Option A: VS Code (Recommended)
-
-Install the Live Server extension.
-
-Right-click index.html and select "Open with Live Server".
-
-Option B: Python
-
-Open your terminal in the project folder.
-
-Run: python -m http.server
-
-Go to http://localhost:8000 in your browser.
-
-🌐 Firebase Configuration
-
-To enable multiplayer in your own environment, you must update the Firebase config in the code:
-
-Go to Firebase Console.
-
-Create a project and enable Authentication (Google Sign-In) and Realtime Database.
-
-Open index.html and find the initializeFirebase function.
-
-Replace fallbackConfig with your project keys:
-
-const fallbackConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-
 📜 License
 
 This project is open source and available for educational purposes.
