@@ -371,11 +371,6 @@
                                 <select id="spBotSelect" class="w-full md:w-48 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
                                     <option value="Incremental">Incremental (Standard)</option>
                                     <option value="Aggressive">Aggressive (Risky)</option>
-                                    <option value="Conservative">Conservative (Safe)</option>
-                                    <option value="Passive">Passive (Low Activity)</option>
-                                    <option value="Adaptive">Adaptive (Smart)</option>
-                                    <option value="Sniper">Sniper (Last Second)</option>
-                                    <option value="Rapid">Rapid (Fast Bidder)</option>
                                 </select>
                             </div>
                             <button onclick="window.gameController.startSinglePlayerGame()" class="w-full md:w-auto px-6 py-2 h-[38px] bg-gradient-to-b from-gold-400 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black font-bold rounded-lg shadow-lg hover:shadow-gold-500/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"><span>⚔️</span> Duel!</button>
@@ -1344,6 +1339,8 @@
                         isSpectator = remotePlayersData[player].isSpectator;
                         isReady = remotePlayersData[player].isReady;
                         isHost = remotePlayersData[player].isHost;
+                    } else if (player === this.currentPlayerName && !this.hostIsPlaying && this.isHost) {
+                         isSpectator = true; 
                     }
 
                     const div = document.createElement('div');
@@ -1387,12 +1384,6 @@
                                 <button onclick="window.gameController.quickBid('${player}', '10')" class="py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors" ${isWithdrawn ? 'disabled' : ''}>+10%</button>
                                 <button onclick="window.gameController.quickBid('${player}', '25')" class="py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors" ${isWithdrawn ? 'disabled' : ''}>+25%</button>
                                 <button onclick="window.gameController.quickBid('${player}', 'max')" class="py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors" ${isWithdrawn ? 'disabled' : ''}>Max</button>
-                            </div>
-                            <div class="flex gap-2 mt-1">
-                                <button onclick="window.gameController.openAIConfig('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">⚙ Auto-Bid</button>
-                                <button onclick="window.gameController.toggleWithdraw('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">
-                                    ${isWithdrawn ? 'Rejoin' : 'Withdraw'}
-                                </button>
                             </div>
                         </div>`;
                     } else if (isSpectator) {
@@ -1603,9 +1594,6 @@
                 if (this.multiplayerMode && this.isHost && !isSyncEvent) this.broadcastGameState();
             }
             
-            // ... (Includes previously defined AI methods, broadcast methods, helpers, etc. truncated here for brevity in explanation but included in file)
-            // Ensured methods exist: triggerWinAnimation, performRoundFairnessAnalysis, predictStrategy, updateStrategyPredictions, updateSuggestions, aiMakeBid, activateAIForPlayer, stopAIForPlayer, showFinalResults, closeVictoryModal, kickPlayer, syncNewRound, handleRemoteBid, broadcastBid, broadcastGameState, createAIBot, showAddAIModal, closeAddAIModal, openAIConfig, applyAIConfig, closeAIModal.
-            
             triggerWinAnimation(winnerName) {
                 const logArea = document.getElementById('auctionLog');
                 if(logArea) {
@@ -1613,15 +1601,48 @@
                     setTimeout(() => logArea.classList.remove('animate-pulse'), 500);
                 }
             }
-            performRoundFairnessAnalysis() {} // Stub for brevity, assuming logic exists
+            performRoundFairnessAnalysis() {} 
             predictStrategy() { return { strategy: "Passive" }; }
             updateStrategyPredictions() {}
             updateSuggestions() {}
-            aiMakeBid(player) { /* AI Logic */ }
-            activateAIForPlayer(p, s) { this.state.aiPlayers[p] = { strategy: s, active: true }; }
-            stopAIForPlayer(p) { delete this.state.aiPlayers[p]; }
+            aiMakeBid(player) { 
+                const ai = this.state.aiPlayers[player];
+                if (!ai || !ai.active) return;
+                if (!this.state.timerRunning) return;
+                if (this.state.withdrawnPlayers[player]) return;
+                
+                const strategy = ai.strategy;
+                const purse = this.state.purses[player] || 0;
+                const [_, basePrice] = this.state.currentItem;
+                const cur = this.state.highestBid;
+                
+                if(Math.random() < 0.2) { 
+                   this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000); 
+                   return; 
+                }
+
+                let bid = cur + this.state.minIncrement;
+                if(strategy === 'Aggressive') bid += basePrice * 0.1;
+
+                if (bid > purse) {
+                     this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000); 
+                     return;
+                }
+                this.placeBid(player, bid, false);
+                this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000 + Math.random() * 2000);
+            }
+
+            activateAIForPlayer(p, s) { 
+                this.state.aiPlayers[p] = { strategy: s, active: true }; 
+                this.state.aiTimers[p] = setTimeout(() => this.aiMakeBid(p), 1000);
+            }
+            
+            stopAIForPlayer(p) { 
+                delete this.state.aiPlayers[p]; 
+                clearTimeout(this.state.aiTimers[p]);
+            }
+
             showFinalResults() {
-                // ... show confetti
                 document.getElementById('victoryModal').classList.remove('hidden');
                 document.getElementById('victoryModal').classList.add('flex');
             }
@@ -1631,16 +1652,83 @@
                 if(this.multiplayerMode) this.exitToMenu();
             }
             kickPlayer(p) { if(this.isHost) this.roomRef.child('players').child(p).remove(); }
-            syncNewRound(gs) { /* sync logic */ }
-            handleRemoteBid(b) { /* bid logic */ }
+            syncNewRound(gs) { 
+                this.state.currentRound = gs.currentRound;
+                // Add sync logic if needed
+            }
+            handleRemoteBid(b) { /* bid logic handled via listener updates mostly */ }
             broadcastBid(p, a, t) { /* firebase push */ }
             broadcastGameState() { /* firebase update */ }
-            createAIBot() { /* sp logic */ }
-            showAddAIModal() {}
-            closeAddAIModal() {}
-            openAIConfig() {}
-            applyAIConfig() {}
-            closeAIModal() {}
+            
+            createAIBot() { 
+                const name = document.getElementById('newAIName').value;
+                const purse = parseFloat(document.getElementById('newAIPurse').value);
+                this.state.players.push(name);
+                this.state.purses[name] = purse;
+                this.activateAIForPlayer(name, "Incremental");
+                this.renderPlayers();
+                this.closeAddAIModal();
+            }
+
+            showAddAIModal() { document.getElementById('addAIModal').classList.remove('hidden'); document.getElementById('addAIModal').classList.add('flex'); }
+            closeAddAIModal() { document.getElementById('addAIModal').classList.add('hidden'); document.getElementById('addAIModal').classList.remove('flex'); }
+            openAIConfig() { document.getElementById('aiModal').classList.remove('hidden'); document.getElementById('aiModal').classList.add('flex'); }
+            applyAIConfig() { this.closeAIModal(); }
+            closeAIModal() { document.getElementById('aiModal').classList.add('hidden'); document.getElementById('aiModal').classList.remove('flex'); }
+            
+            // Core utility methods
+            toggleDarkMode() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
+            }
+            
+            addLog(msg, type = 'normal') {
+                const log = document.getElementById('auctionLog');
+                if(!log) return;
+                
+                // Optional: clear initial "Awaiting..." message
+                if (log.children.length === 1 && log.children[0].textContent.includes('Awaiting')) {
+                    log.innerHTML = '';
+                }
+                
+                const div = document.createElement('div');
+                let classes = "px-3 py-2 rounded-lg text-xs font-mono mb-1 ";
+                
+                if (type === 'log-bid') {
+                    classes += "bg-slate-100 dark:bg-black/30 text-slate-700 dark:text-slate-300 border-l-4 border-gold-400";
+                } else if (type === 'log-round') {
+                    classes += "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-gold-200 font-bold border border-slate-300 dark:border-slate-700 text-center mt-4";
+                } else if (type === 'log-result') {
+                    classes += "bg-gold-50 dark:bg-gold-900/20 text-gold-700 dark:text-gold-300 font-bold border border-gold-200 dark:border-gold-800 animate-fade-in";
+                } else {
+                    classes += "text-slate-500";
+                }
+                
+                div.className = classes;
+                div.textContent = msg;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            logFairness(msg) {
+                const log = document.getElementById('fairnessLog');
+                if(!log) return;
+                const div = document.createElement('div');
+                div.className = "text-xs py-1 border-b border-slate-700 text-slate-300";
+                div.textContent = msg;
+                log.appendChild(div);
+                log.scrollTop = log.scrollHeight;
+            }
+            
+            clearFairnessLog() { 
+                const log = document.getElementById('fairnessLog');
+                if(log) log.innerHTML = ''; 
+            }
+            
+            updateStatus(msg) { 
+                const el = document.getElementById('statusBar');
+                if(el) el.innerHTML = `<span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> ${msg}`; 
+            }
         }
 
         window.gameController = new GameController();
