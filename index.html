@@ -556,34 +556,64 @@
         </div>
     </div>
 
-    <!-- Victory Modal -->
+    <!-- Victory Modal (UPDATED) -->
     <div id="victoryModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-md transition-opacity opacity-0 pointer-events-none">
-        <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-lg mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative">
-            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent"></div>
-            <div class="p-8 text-center relative z-10">
+        <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative flex flex-col max-h-[90vh]">
+            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent pointer-events-none"></div>
+            
+            <!-- Header -->
+            <div class="p-8 text-center relative z-10 shrink-0">
                 <div class="text-6xl mb-4 animate-bounce">🏆</div>
                 <h2 class="text-4xl font-black text-gold-500 mb-2">WINNER!</h2>
-                <h3 id="winnerName" class="text-3xl font-bold text-slate-800 dark:text-white mb-6">Player Name</h3>
-                
-                <div class="bg-slate-50 dark:bg-black/40 rounded-xl p-4 mb-6 border border-slate-200 dark:border-slate-800">
+                <h3 id="winnerName" class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Player Name</h3>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-8 custom-scrollbar">
+                <!-- Stats Grid -->
+                <div class="bg-slate-50 dark:bg-black/40 rounded-xl p-4 mb-6 border border-slate-200 dark:border-slate-800 shrink-0">
                     <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div>
+                        <div class="text-center">
                             <span class="block text-slate-400 text-xs font-bold uppercase">Wins</span>
                             <span id="winnerWins" class="text-xl font-bold text-slate-800 dark:text-white">0</span>
                         </div>
-                        <div>
+                        <div class="text-center">
                             <span class="block text-slate-400 text-xs font-bold uppercase">Purse Left</span>
                             <span id="winnerPurse" class="text-xl font-bold text-emerald-500">₹0</span>
                         </div>
-                        <div>
+                        <div class="text-center">
                             <span class="block text-slate-400 text-xs font-bold uppercase">Efficiency</span>
                             <span class="text-xl font-bold text-gold-500">S+</span>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="window.gameController.closeVictoryModal()" class="w-full px-6 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
-                    Continue to Lobby
+                <!-- Round History Table (New) -->
+                <h4 class="text-lg font-bold text-slate-700 dark:text-gold-400 mb-3 uppercase tracking-wider text-center">Match History</h4>
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase">
+                            <tr>
+                                <th class="p-3">Rnd</th>
+                                <th class="p-3">Item</th>
+                                <th class="p-3">Winner</th>
+                                <th class="p-3 text-right">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roundHistoryBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300 bg-white dark:bg-black/20">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-black/20 shrink-0 flex gap-4">
+                <button onclick="window.gameController.closeVictoryModal(false)" class="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                    Close & Review
+                </button>
+                <button onclick="window.gameController.closeVictoryModal(true)" class="flex-1 px-4 py-3 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
+                    Exit to Lobby
                 </button>
             </div>
         </div>
@@ -710,7 +740,8 @@
                     bidHistory: [], perRoundPlayerBids: {}, perPlayerLastBidTime: {}, suspiciousBids: [],
                     roundResults: [], timerRunning: false, roundTimeLeft: 0, roundEndTime: 0,
                     timerInterval: null, aiPlayers: {}, aiTimers: {}, minIncrement: 0,
-                    currentAIPlayer: null, withdrawnPlayers: {}, roundStatus: 'waiting'
+                    currentAIPlayer: null, withdrawnPlayers: {}, roundStatus: 'waiting',
+                    bidCounts: {} // NEW: Track bid frequency
                 };
 
                 this.currentRoom = null;
@@ -918,6 +949,7 @@
                 this.state.suspiciousBids = [];
                 this.state.perRoundPlayerBids = {};
                 this.state.perPlayerLastBidTime = {};
+                this.state.bidCounts = {}; // Reset counts
 
                 // Hide input panel
                 document.getElementById('singlePlayerControls').innerHTML = `
@@ -1629,6 +1661,7 @@
                 }
                 
                 this.renderPlayers();
+                this.updateAIAnalysis(); // Added
             }
 
             updateItemUI() {
@@ -1644,6 +1677,88 @@
                 if (baseEl) baseEl.innerText = '₹' + price.toLocaleString();
                 if (minEl) minEl.innerText = '₹' + minInc.toLocaleString();
                 if (nameEl) nameEl.innerText = this.state.currentItem[0];
+            }
+
+            updateAIAnalysis() {
+                const analysisPanel = document.getElementById('strategyPanel');
+                const tipsPanel = document.getElementById('suggestionsPanel');
+                
+                if (!analysisPanel || !tipsPanel) return;
+
+                // 1. Analyze Market Aggression
+                let maxBids = 0;
+                let aggressivePlayer = 'None';
+                
+                Object.entries(this.state.bidCounts).forEach(([player, count]) => {
+                    if (count > maxBids) {
+                        maxBids = count;
+                        aggressivePlayer = player;
+                    }
+                });
+
+                let analysisHtml = `
+                    <div class="mb-2">
+                        <span class="block text-slate-400 uppercase text-[10px] font-bold">Most Aggressive</span>
+                        <span class="text-rose-500 font-bold">${aggressivePlayer} (${maxBids} bids)</span>
+                    </div>
+                `;
+
+                // Add spending leader
+                let maxSpent = 0;
+                let bigSpender = 'None';
+                // Calculate spending based on initial vs current purse
+                Object.keys(this.state.purses).forEach(p => {
+                    // Need initial purses to calculate spent properly, assuming everyone started roughly same or tracking via wins
+                    // For now, simpler: check wins price total
+                    let spent = this.state.roundResults
+                        .filter(r => r.winner === p)
+                        .reduce((sum, r) => sum + r.price, 0);
+                    if (spent > maxSpent) {
+                        maxSpent = spent;
+                        bigSpender = p;
+                    }
+                });
+
+                if (maxSpent > 0) {
+                    analysisHtml += `
+                        <div>
+                            <span class="block text-slate-400 uppercase text-[10px] font-bold">Big Spender</span>
+                            <span class="text-gold-500 font-bold">${bigSpender} (₹${maxSpent.toLocaleString()})</span>
+                        </div>
+                    `;
+                } else {
+                    analysisHtml += `<div class="text-xs text-slate-500 italic">No spending yet.</div>`;
+                }
+
+                analysisPanel.innerHTML = analysisHtml;
+
+                // 2. Generate Personal Tips
+                if (!this.currentPlayerName) return;
+
+                const myPurse = this.state.purses[this.currentPlayerName] || 0;
+                const myWins = this.state.roundResults.filter(r => r.winner === this.currentPlayerName).length;
+                let tip = "";
+                let tipColor = "text-slate-600 dark:text-slate-300";
+
+                if (myPurse < 5000) {
+                    tip = "⚠️ CRITICAL: Low Funds! Do not bid early. Wait for opponents to exhaust their budgets on expensive items, then snipe cheap ones.";
+                    tipColor = "text-rose-500 font-bold";
+                } else if (myWins === 0 && this.state.currentRound > 2) {
+                    tip = "💡 You are falling behind. Opponents are securing assets. Try opening with a strong bid (+25%) to intimidate bots.";
+                    tipColor = "text-gold-600 dark:text-gold-400";
+                } else if (this.state.roundStatus === 'active' && this.state.highestBid > myPurse) {
+                    tip = "🚫 Too expensive. You cannot afford this. Let it go.";
+                    tipColor = "text-rose-500";
+                } else if (this.state.roundStatus === 'active' && this.state.highestBid > myPurse * 0.6) {
+                     tip = "⚠️ Caution: This item would cost >60% of your remaining funds. Only bid if you really need it.";
+                } else if (this.state.highestBidder === this.currentPlayerName) {
+                    tip = "✅ You are winning. Hold your position. Watch out for last-second snipers.";
+                    tipColor = "text-emerald-500 font-bold";
+                } else {
+                    tip = "ℹ️ Look for value. Bid when the price is low relative to the item's worth.";
+                }
+
+                tipsPanel.innerHTML = `<p class="${tipColor} text-xs leading-relaxed">${tip}</p>`;
             }
 
             nextRound() {
@@ -1688,6 +1803,7 @@
 
                 this.startTimer();
                 this.renderPlayers();
+                this.updateAIAnalysis(); // Added
             }
 
             startTimer() {
@@ -1752,12 +1868,14 @@
                 // Execute Bid
                 this.state.highestBid = amount;
                 this.state.highestBidder = player;
+                this.state.bidCounts[player] = (this.state.bidCounts[player] || 0) + 1; // Track count
                 
                 // Update UI
                 document.getElementById('highestBid').innerText = '₹' + amount.toLocaleString();
                 document.getElementById('highestBidderName').innerText = player;
                 this.logAction(player, amount);
                 this.renderPlayers();
+                this.updateAIAnalysis(); // Update stats
 
                 // Multiplayer Sync
                 if (this.multiplayerMode) {
@@ -1820,6 +1938,7 @@
 
                 this.updateLeaderboard();
                 this.renderPlayers();
+                this.updateAIAnalysis(); // Final update for round
 
                 if (this.multiplayerMode && this.isHost && !isRemoteTrigger) {
                     this.roomRef.child('players').child(winner).update({ purse: this.state.purses[winner] });
@@ -1906,24 +2025,49 @@
                 document.getElementById('winnerWins').innerText = maxWins;
                 document.getElementById('winnerPurse').innerText = '₹' + Math.floor(this.state.purses[winner]).toLocaleString();
                 
+                // POPULATE TABLE HISTORY
+                const historyBody = document.getElementById('roundHistoryBody');
+                historyBody.innerHTML = '';
+                this.state.roundResults.forEach(r => {
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-black/5 dark:hover:bg-white/5";
+                    row.innerHTML = `
+                        <td class="p-3 border-b border-slate-100 dark:border-slate-800">${r.round}</td>
+                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 font-medium">${r.item}</td>
+                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 font-bold text-slate-800 dark:text-white">${r.winner}</td>
+                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 text-right font-mono text-gold-600 dark:text-gold-400">₹${r.price.toLocaleString()}</td>
+                    `;
+                    historyBody.appendChild(row);
+                });
+
                 const modal = document.getElementById('victoryModal');
                 modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
                 modal.classList.add('flex', 'opacity-100', 'pointer-events-auto');
             }
             
-            closeVictoryModal() {
-                document.getElementById('victoryModal').classList.add('hidden');
-                this.exitToMenu();
+            closeVictoryModal(exitGame = true) {
+                const modal = document.getElementById('victoryModal');
+                modal.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+                modal.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+                
+                if (exitGame) {
+                    this.exitToMenu();
+                }
             }
 
             handleRemoteBid(bidData) {
                 // Just update UI to match remote state
                 this.state.highestBid = bidData.amount;
                 this.state.highestBidder = bidData.player;
+                
+                // Track bid count for remote players too for analytics
+                this.state.bidCounts[bidData.player] = (this.state.bidCounts[bidData.player] || 0) + 1;
+                
                 document.getElementById('highestBid').innerText = '₹' + bidData.amount.toLocaleString();
                 document.getElementById('highestBidderName').innerText = bidData.player;
                 this.logAction(bidData.player, bidData.amount);
                 this.renderPlayers();
+                this.updateAIAnalysis(); // Update analytics
             }
 
             updateMultiplayerUI() {
