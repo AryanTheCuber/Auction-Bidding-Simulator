@@ -1297,6 +1297,11 @@
                         this.syncNewRound(gameState);
                     } else if (gameState.started && !this.state.timerRunning && gameState.timerRunning) {
                         this.state.currentItem = gameState.currentItem;
+                        // NEW: Ensure update here in case of mid-game join
+                        if (this.state.currentItem) {
+                            this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
+                            this.updateItemUI();
+                        }
                         this.state.roundEndTime = gameState.roundEndTime;
                         this.state.timerRunning = true;
                         this.startTimer();
@@ -1599,20 +1604,21 @@
                 this.state.roundStatus = gameState.roundStatus;
                 
                 // Recalculate min increment based on base price (item price) - 2% logic
-                this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
+                if (this.state.currentItem) {
+                    this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
+                }
 
-                document.getElementById('itemName').innerText = this.state.currentItem[0];
                 const descEl = document.getElementById('itemDesc');
                 if (descEl && gameState.customItem) descEl.textContent = gameState.customItem.desc;
                 else if (descEl) descEl.textContent = "";
 
-                document.getElementById('basePrice').innerText = '₹' + this.state.currentItem[1].toLocaleString(); 
-                document.getElementById('minIncrement').innerText = '₹' + this.state.minIncrement.toLocaleString();
+                this.updateItemUI();
+                
                 document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
                 document.getElementById('highestBidderName').innerText = this.state.highestBidder || '-';
                 document.getElementById('auctionLog').innerHTML = '';
                 
-                this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem[0]}`);
+                this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem ? this.state.currentItem[0] : 'Unknown'}`);
 
                 if (gameState.timerRunning) {
                     // Sync timer
@@ -1623,6 +1629,21 @@
                 }
                 
                 this.renderPlayers();
+            }
+
+            updateItemUI() {
+                if (!this.state.currentItem) return;
+                
+                const price = this.state.currentItem[1];
+                const minInc = this.state.minIncrement;
+                
+                const baseEl = document.getElementById('basePrice');
+                const minEl = document.getElementById('minIncrement');
+                const nameEl = document.getElementById('itemName');
+                
+                if (baseEl) baseEl.innerText = '₹' + price.toLocaleString();
+                if (minEl) minEl.innerText = '₹' + minInc.toLocaleString();
+                if (nameEl) nameEl.innerText = this.state.currentItem[0];
             }
 
             nextRound() {
@@ -1645,10 +1666,7 @@
                 this.state.roundStatus = 'active';
                 this.state.roundTimeLeft = this.ROUND_DURATION;
 
-                // Update UI
-                document.getElementById('itemName').innerText = this.state.currentItem[0];
-                document.getElementById('basePrice').innerText = '₹' + this.state.highestBid.toLocaleString();
-                document.getElementById('minIncrement').innerText = '₹' + this.state.minIncrement.toLocaleString();
+                this.updateItemUI();
                 document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
                 document.getElementById('highestBidderName').innerText = '-';
                 document.getElementById('auctionLog').innerHTML = '';
@@ -1823,11 +1841,9 @@
             logAction(player, amount) {
                 const log = document.getElementById('auctionLog');
                 const entry = document.createElement('div');
-                entry.className = "flex justify-between items-center text-xs p-2 rounded bg-white dark:bg-black/30 border-l-2 border-gold-500";
-                entry.innerHTML = `
-                    <span class="font-bold text-slate-700 dark:text-slate-300">${player}</span>
-                    <span class="font-mono text-gold-600 dark:text-gold-400">₹${amount.toLocaleString()}</span>
-                `;
+                // Simplified log style - No boxes, just text
+                entry.className = "text-xs py-1 text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800";
+                entry.innerHTML = `<strong class="text-slate-800 dark:text-slate-200">${player}</strong> bid <span class="text-gold-600 dark:text-gold-400 font-mono">₹${amount.toLocaleString()}</span>`;
                 log.prepend(entry);
             }
 
