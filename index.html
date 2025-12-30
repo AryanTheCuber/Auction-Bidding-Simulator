@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auction Bidding Simulator</title>
+    <title>🔥 Ultimate Auction Simulator</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -84,6 +85,7 @@
 </head>
 <body class="bg-gray-50 text-slate-800 font-sans min-h-screen transition-colors duration-300 dark:bg-dark-950 dark:text-slate-100 overflow-x-hidden">
 
+    <!-- Entry Page -->
     <div id="entryPage" class="min-h-screen relative overflow-hidden bg-black text-white">
         <div class="absolute inset-0 z-0">
             <img src="https://i.pinimg.com/736x/c0/93/45/c09345d986c121ec27cf5fdbadc36acf.jpg" 
@@ -120,7 +122,7 @@
                     </div>
                 </button>
                 
-                
+                <!-- Multiplayer Button -->
                 <button onclick="window.gameController.showInstructions('multi')" 
                         class="group relative overflow-hidden rounded-2xl glass-effect p-8 hover:scale-105 transition-all duration-300 hover:border-gold-500 animate-glow flex flex-col items-center justify-center text-center h-80">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gold-500 opacity-20 rounded-full blur-3xl group-hover:opacity-30 transition-opacity"></div>
@@ -136,7 +138,7 @@
         </div>
     </div>
 
-    
+    <!-- Instructions Buffer Page -->
     <div id="instructionsPage" class="fixed inset-0 z-50 hidden bg-black/95 text-white flex flex-col items-center justify-center p-4">
         <div class="max-w-2xl w-full bg-slate-900 border border-gold-500/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden animate-slide-up">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
@@ -146,7 +148,7 @@
             </h2>
             
             <div id="instructContent" class="space-y-4 text-slate-300 mb-8 text-lg">
-                
+                <!-- Content injected via JS -->
             </div>
 
             <div class="flex justify-end gap-4">
@@ -160,7 +162,7 @@
         </div>
     </div>
 
-    
+    <!-- Multiplayer Login Screen -->
     <div id="loginPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
         <div class="max-w-md w-full bg-slate-900 border border-gold-500/30 rounded-2xl p-10 shadow-2xl relative overflow-hidden text-center">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
@@ -176,7 +178,7 @@
         </div>
     </div>
 
-    
+    <!-- Multiplayer Lobby -->
     <div id="lobbyPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
         <div class="max-w-4xl w-full">
             <h2 class="text-4xl font-bold text-center text-gold-400 mb-10 flex justify-center items-center gap-3">
@@ -184,7 +186,7 @@
             </h2>
             
             <div class="grid md:grid-cols-2 gap-8">
-                
+                <!-- Create Room Card -->
                 <div class="bg-slate-900 border border-slate-700 hover:border-gold-500/50 rounded-2xl p-8 transition-all hover:transform hover:-translate-y-1 shadow-2xl relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gold-500 opacity-5 rounded-full blur-3xl group-hover:opacity-10 transition-opacity"></div>
                     <div class="text-4xl mb-4">👑</div>
@@ -195,7 +197,7 @@
                     </button>
                 </div>
 
-                
+                <!-- Join Room Card -->
                 <div class="bg-slate-900 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-8 transition-all hover:transform hover:-translate-y-1 shadow-2xl relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-5 rounded-full blur-3xl group-hover:opacity-10 transition-opacity"></div>
                     <div class="text-4xl mb-4">🎟️</div>
@@ -218,7 +220,7 @@
         </div>
     </div>
 
-    
+    <!-- Host Setup Modal -->
     <div id="hostSetupModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-md p-4 overflow-y-auto">
         <div class="bg-slate-900 border-2 border-gold-500/50 rounded-2xl p-8 w-full max-w-lg relative shadow-2xl my-auto">
             <div class="absolute -top-4 -left-4 bg-gold-500 text-black font-bold px-4 py-1 rounded-lg shadow-lg">HOST CONFIG</div>
@@ -226,13 +228,13 @@
             <h2 class="text-3xl font-bold text-white mb-4">Setup Tournament</h2>
             
             <div class="space-y-4">
-                
+                <!-- Host Name -->
                 <div>
                     <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Name</label>
                     <input type="text" id="hostNameInput" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none" placeholder="Enter your name">
                 </div>
 
-                
+                <!-- Host Participation -->
                 <div>
                     <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Role</label>
                     <div class="flex items-center justify-between bg-black/30 p-3 rounded-xl border border-slate-700">
@@ -247,27 +249,41 @@
                     </div>
                 </div>
 
-                
+                <!-- Host Purse Input -->
                 <div id="hostPurseContainer">
                     <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Purse (₹)</label>
                     <input type="number" id="hostPurseInput" value="50000" min="1000" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none">
                 </div>
 
-                
+                <!-- Setup Tabs -->
                 <div class="flex border-b border-slate-700 mb-4">
                     <button id="tabPreset" onclick="window.gameController.switchSetupTab('preset')" class="flex-1 py-2 text-sm font-bold text-gold-500 border-b-2 border-gold-500 transition-colors">Choose Category</button>
                     <button id="tabCustom" onclick="window.gameController.switchSetupTab('custom')" class="flex-1 py-2 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-white transition-colors">Custom Item</button>
                 </div>
 
-                
+                <!-- Tab: Presets -->
                 <div id="contentPreset" class="block">
+                    <!-- NEW: IPL 2025 Button -->
+                    <div class="mb-4">
+                        <button onclick="window.gameController.selectCategory('IPL 2025', this)" class="cat-btn w-full p-4 border border-slate-600 rounded-xl text-left hover:border-gold-500 hover:bg-slate-800 transition-all bg-gradient-to-r from-blue-900 to-slate-900 border-blue-500/30">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-3xl block mb-1">🏏</span>
+                                    <span class="font-black text-lg text-white tracking-wide">IPL 2025 MEGA</span>
+                                    <div class="text-xs text-blue-300">Pant, Iyer, Kohli & More</div>
+                                </div>
+                                <div class="bg-gold-500 text-black text-[10px] font-bold px-2 py-1 rounded">NEW</div>
+                            </div>
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <button onclick="window.gameController.selectCategory('Real Estate', this)" class="cat-btn p-3 border border-slate-600 rounded-xl text-left hover:border-gold-500 hover:bg-slate-800 transition-all active-cat">
                             <span class="text-2xl block mb-1">🏠</span>
                             <span class="font-bold text-sm text-white">Real Estate</span>
                         </button>
                         <button onclick="window.gameController.selectCategory('Sports', this)" class="cat-btn p-3 border border-slate-600 rounded-xl text-left hover:border-gold-500 hover:bg-slate-800 transition-all">
-                            <span class="text-2xl block mb-1">🏏</span>
+                            <span class="text-2xl block mb-1">🏎️</span>
                             <span class="font-bold text-sm text-white">Sports</span>
                         </button>
                         <button onclick="window.gameController.selectCategory('Art', this)" class="cat-btn p-3 border border-slate-600 rounded-xl text-left hover:border-gold-500 hover:bg-slate-800 transition-all">
@@ -284,7 +300,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Rounds</label>
-                            <input type="number" id="setupRounds" value="5" min="1" max="10" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none text-center">
+                            <input type="number" id="setupRounds" value="5" min="1" max="15" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none text-center">
                         </div>
                         <div>
                             <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Seconds</label>
@@ -293,7 +309,7 @@
                     </div>
                 </div>
 
-                
+                <!-- Tab: Custom -->
                 <div id="contentCustom" class="hidden space-y-3">
                     <div>
                         <label class="block text-slate-400 text-xs font-bold uppercase mb-1">Item Name</label>
@@ -329,7 +345,7 @@
         </div>
     </div>
 
-   
+    <!-- Main Game App -->
     <div id="mainApp" class="hidden">
         <header class="bg-gradient-to-r from-gray-900 via-slate-900 to-black text-white shadow-2xl relative overflow-hidden border-b border-gold-600/30">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
@@ -341,14 +357,14 @@
                         <div class="flex items-center gap-4">
                             <button onclick="window.gameController.exitToMenu()" class="text-xs uppercase font-bold text-slate-500 hover:text-gold-400 transition-colors">← Menu</button>
                             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight drop-shadow-lg">
-                                🏆 Auction Bidding <span class="text-gold-400">Simulator</span>
+                                🏆 Ultimate <span class="text-gold-400">Auction</span>
                             </h1>
                         </div>
-                        <p class="text-slate-400 mt-1 font-medium text-sm uppercase tracking-widest pl-14">Modern Bidding Engine</p>
+                        <p class="text-slate-400 mt-1 font-medium text-sm uppercase tracking-widest pl-14">Premium Bidding Engine</p>
                     </div>
                     
                     <div class="flex flex-col gap-3 w-full lg:w-auto">
-                        
+                        <!-- Single Player Setup Controls -->
                         <div id="singlePlayerControls" class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-gold-500/20 flex flex-col md:flex-row gap-3 items-end shadow-lg hidden">
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Your Name</label>
@@ -357,7 +373,7 @@
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Your Purse (₹)</label>
                                 <input type="number" id="spPurseInput" value="50000" min="1000"
-                                    class="w-full md:w-28 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
+                                    class="w-full md:w-36 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none font-mono">
                             </div>
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Opponent Bot</label>
@@ -376,7 +392,7 @@
                             </button>
                         </div>
 
-                        
+                        <!-- Multiplayer Controls -->
                         <div id="multiplayerStatus" class="w-full hidden">
                             <div class="flex flex-col gap-2 items-center md:items-end">
                                 <div id="multiplayerRoomInfo" class="hidden"></div>
@@ -554,21 +570,21 @@
         </div>
     </div>
 
-   
+    <!-- Victory Modal (UPDATED) -->
     <div id="victoryModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-md transition-opacity opacity-0 pointer-events-none">
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative flex flex-col max-h-[90vh]">
             <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent pointer-events-none"></div>
             
-            
+            <!-- Header -->
             <div class="p-8 text-center relative z-10 shrink-0">
                 <div class="text-6xl mb-4 animate-bounce">🏆</div>
                 <h2 class="text-4xl font-black text-gold-500 mb-2">WINNER!</h2>
                 <h3 id="winnerName" class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Player Name</h3>
             </div>
 
-            
+            <!-- Scrollable Content -->
             <div class="flex-1 overflow-y-auto px-8 custom-scrollbar">
-                
+                <!-- Stats Grid -->
                 <div class="bg-slate-50 dark:bg-black/40 rounded-xl p-4 mb-6 border border-slate-200 dark:border-slate-800 shrink-0">
                     <div class="grid grid-cols-3 gap-4 text-sm">
                         <div class="text-center">
@@ -586,7 +602,7 @@
                     </div>
                 </div>
 
-                
+                <!-- Round History Table (New) -->
                 <h4 class="text-lg font-bold text-slate-700 dark:text-gold-400 mb-3 uppercase tracking-wider text-center">Match History</h4>
                 <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
                     <table class="w-full text-left text-xs">
@@ -599,13 +615,13 @@
                             </tr>
                         </thead>
                         <tbody id="roundHistoryBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300 bg-white dark:bg-black/20">
-                            
+                            <!-- Populated via JS -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            
+            <!-- Footer Buttons -->
             <div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-black/20 shrink-0 flex gap-4">
                 <button onclick="window.gameController.closeVictoryModal(false)" class="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                     Close & Review
@@ -617,7 +633,7 @@
         </div>
     </div>
 
-    
+    <!-- AI Config Modal -->
     <div id="aiModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none">
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform scale-95 transition-transform duration-300 border border-slate-200 dark:border-gold-500/30 overflow-hidden">
             <div class="p-6">
@@ -648,7 +664,7 @@
         </div>
     </div>
 
-    
+    <!-- Add AI Bot Modal (SP) -->
     <div id="addAIModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none">
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform scale-95 transition-transform duration-300 border border-slate-200 dark:border-gold-500/30 overflow-hidden">
             <div class="p-6">
@@ -695,18 +711,35 @@
             constructor() {
                 this.MAX_PLAYERS = 10;
                 this.MAX_ROUNDS = 10;
-                this.ROUND_DURATION = 60;
+                this.ROUND_DURATION = 60; // Default
                 this.ANTI_SNIPING_WINDOW = 5;
                 this.ANTI_SNIPING_EXTENSION = 10;
                 this.ANTI_SPAM_SECONDS = 2;
                 this.UNUSUAL_MULTIPLIER = 3;
-                this.MIN_INCREMENT_RATIO = 0.02; 
+                this.MIN_INCREMENT_RATIO = 0.02; // 2% of base price
 
                 this.CATEGORY_SETS = {
                     'Real Estate': [
                         ["Penthouse in NYC", 5000000], ["Beach Villa", 2500000], ["Mountain Cabin", 800000], 
                         ["Downtown Condo", 1200000], ["Private Island", 10000000], ["Paris Apartment", 3000000],
                         ["Lake House", 1500000], ["Ski Chalet", 2000000], ["Ranch in Texas", 4000000], ["Tokyo Studio", 900000]
+                    ],
+                    'IPL 2025': [
+                        ["Rishabh Pant", 20000000], ["Shreyas Iyer", 20000000], ["Venkatesh Iyer", 20000000],
+                        ["Arshdeep Singh", 20000000], ["Yuzvendra Chahal", 20000000], ["Jos Buttler", 20000000],
+                        ["KL Rahul", 20000000], ["Mohammed Shami", 20000000], ["Ravichandran Ashwin", 20000000],
+                        ["David Miller", 20000000], ["Kagiso Rabada", 20000000], ["Mitchell Starc", 20000000],
+                        ["Jofra Archer", 20000000], ["Liam Livingstone", 20000000], ["Trent Boult", 20000000],
+                        ["Glenn Maxwell", 20000000], ["Faf du Plessis", 20000000], ["Quinton de Kock", 20000000],
+                        ["Sam Curran", 20000000], ["Rachin Ravindra", 20000000], ["Virat Kohli", 20000000], 
+                        ["Rohit Sharma", 20000000], ["Jasprit Bumrah", 20000000], ["MS Dhoni", 20000000],
+                        ["Suryakumar Yadav", 20000000], ["Hardik Pandya", 20000000], ["Ravindra Jadeja", 20000000],
+                        ["Heinrich Klaasen", 20000000], ["Nicholas Pooran", 20000000], ["Shubman Gill", 20000000],
+                        ["Sanju Samson", 20000000], ["Yashasvi Jaiswal", 20000000], ["Ruturaj Gaikwad", 20000000],
+                        ["Rashid Khan", 20000000], ["Andre Russell", 20000000], ["Sunil Narine", 20000000],
+                        ["Axar Patel", 20000000], ["Kuldeep Yadav", 20000000], ["Varun Chakravarthy", 20000000],
+                        ["Rinku Singh", 20000000], ["Mayank Yadav", 20000000], ["Matheesha Pathirana", 20000000],
+                        ["Travis Head", 20000000], ["Pat Cummins", 20000000], ["Abhishek Sharma", 20000000]
                     ],
                     'Sports': [
                         ["Signed Messi Jersey", 50000], ["1992 Jordan Sneakers", 150000], ["F1 Car Part", 30000],
@@ -746,7 +779,7 @@
                 this.currentPlayerName = null;
                 this.isHost = false;
                 this.hostIsPlaying = true; 
-                this.isReady = false; 
+                this.isReady = false; // Player readiness state
                 this.roomRef = null;
                 this.multiplayerMode = false;
                 this.inMultiplayerFlow = false;
@@ -754,7 +787,7 @@
                 this.database = null;
                 this.auth = null;
                 this.selectedPendingMode = null;
-                this.setupTab = 'preset';
+                this.setupTab = 'preset'; // 'preset' or 'custom'
 
                 this.initializeFirebase();
                 this.initializeDarkMode();
@@ -788,24 +821,24 @@
                     this.database = firebase.database();
 
                     this.auth.onAuthStateChanged((user) => {
-                        
+                        // Strict check: User must exist AND NOT be anonymous
                         if (user && !user.isAnonymous) {
                             console.log("✅ Auth Ready (Google):", user.uid);
                             this.firebaseInitialized = true;
                             
-                            
+                            // If user logs in while in multiplayer flow, auto-advance to lobby
                             if (this.inMultiplayerFlow) {
                                 this.showLobby();
                             }
                         } else {
-                            
+                            // If user is anonymous, Force Sign Out to clear cached session
                             if (user && user.isAnonymous) {
                                 console.log("Cleaning up anonymous session to force Google Login...");
                                 this.auth.signOut();
-                                return;
+                                return; // Listener will trigger again with null
                             }
 
-                            
+                            // Show login button if not logged in
                             const authSec = document.getElementById('googleAuthSection');
                             const multiBtns = document.getElementById('multiplayerButtons');
                             if(authSec && multiBtns) {
@@ -844,7 +877,7 @@
                 });
             }
 
-            
+            // Step 1: Click Button on Entry Page -> Show Instructions
             showInstructions(mode) {
                 this.selectedPendingMode = mode;
                 const modal = document.getElementById('instructionsPage');
@@ -885,7 +918,7 @@
                 modal.classList.remove('flex');
             }
 
-            
+            // Step 2: Confirm Instructions -> Branch Logic
             confirmInstructions() {
                 this.hideInstructions();
                 const mode = this.selectedPendingMode;
@@ -899,7 +932,7 @@
                 }
             }
 
-            
+            // START Single Player Setup (Shows Main App directly)
             startSinglePlayerSetup() {
                 const entryPage = document.getElementById('entryPage');
                 const mainApp = document.getElementById('mainApp');
@@ -918,7 +951,7 @@
                 badge.classList.add('hidden');
             }
 
-           
+            // --- SINGLE PLAYER START ---
             startSinglePlayerGame() {
                 const nameInput = document.getElementById('spNameInput').value.trim();
                 const purseInput = parseFloat(document.getElementById('spPurseInput').value);
@@ -930,7 +963,7 @@
                 this.currentPlayerName = nameInput;
                 const botName = "Bot_" + botType;
 
-                
+                // Reset state for new game
                 this.state.players = [nameInput, botName];
                 this.state.purses = {
                     [nameInput]: purseInput,
@@ -938,7 +971,7 @@
                 };
                 
                 this.state.aiPlayers = {};
-                this.activateAIForPlayer(botName, botType); 
+                this.activateAIForPlayer(botName, botType); // THIS FUNCTION IS DEFINED BELOW
 
                 this.state.numRounds = 5;
                 this.state.currentRound = 0;
@@ -947,9 +980,9 @@
                 this.state.suspiciousBids = [];
                 this.state.perRoundPlayerBids = {};
                 this.state.perPlayerLastBidTime = {};
-                this.state.bidCounts = {}; 
+                this.state.bidCounts = {}; // Reset counts
 
-                
+                // Hide input panel
                 document.getElementById('singlePlayerControls').innerHTML = `
                     <div class="flex items-center gap-4 text-sm font-bold text-gold-400">
                         <span>⚔️ DUEL MODE</span>
@@ -962,7 +995,7 @@
                 this.nextRound();
             }
 
-           
+            // Check Login for Multiplayer
             checkLoginAndShowLobby() {
                 const user = this.auth ? this.auth.currentUser : null;
                 const isLoggedIn = user && !user.isAnonymous;
@@ -1008,7 +1041,7 @@
                 multiControls.classList.remove('hidden');
                 badge.classList.remove('hidden');
                 
-                
+                // Show/Hide Ready Buttons based on role
                 if (this.isHost) {
                     document.getElementById('multiplayerStartBtn').classList.remove('hidden');
                     document.getElementById('readyCheckArea').classList.add('hidden');
@@ -1029,7 +1062,7 @@
                 return 'ROOM-' + Math.random().toString(36).substr(2, 6).toUpperCase();
             }
 
-            
+            // --- HOST SETUP LOGIC ---
 
             openHostSetup() {
                 if (!this.firebaseInitialized) { alert('Waiting for connection...'); return; }
@@ -1039,9 +1072,9 @@
                 document.getElementById('hostNameInput').value = user.displayName || 'Host';
                 document.getElementById('hostSetupModal').classList.remove('hidden');
                 document.getElementById('hostSetupModal').classList.add('flex');
-                this.switchSetupTab('preset'); 
+                this.switchSetupTab('preset'); // Default tab
                 
-                
+                // Initialize purse input visibility
                 this.toggleHostPurseInput();
             }
 
@@ -1089,7 +1122,19 @@
             selectCategory(cat, btn) {
                 document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active-cat', 'border-gold-500', 'bg-slate-800'));
                 btn.classList.add('active-cat', 'border-gold-500', 'bg-slate-800');
+                
+                // Reset styling
+                document.querySelectorAll('.cat-btn').forEach(b => {
+                    b.classList.remove('border-blue-500/50', 'bg-blue-900/30');
+                });
+
                 document.getElementById('selectedCategory').value = cat;
+                
+                // If IPL, update default purse
+                if(cat === 'IPL 2025') {
+                    const purseInput = document.getElementById('hostPurseInput');
+                    if(purseInput) purseInput.value = 1000000000; // 100 Crores
+                }
             }
 
             finalizeCreateRoom() {
@@ -1107,7 +1152,7 @@
                     }
                 }
 
-                
+                // Gather settings
                 let rounds, time, category, customItem = null;
 
                 if (this.setupTab === 'preset') {
@@ -1116,7 +1161,7 @@
                     time = parseInt(document.getElementById('setupTime').value);
                     this.ITEMS = this.CATEGORY_SETS[category] || this.CATEGORY_SETS['Real Estate'];
                 } else {
-                   
+                    // Custom Mode
                     category = 'Custom';
                     const cName = document.getElementById('customItemName').value.trim() || "Custom Item";
                     const cPrice = parseInt(document.getElementById('customBasePrice').value) || 1000;
@@ -1124,17 +1169,17 @@
                     const cTime = parseInt(document.getElementById('customDuration').value) || 60;
                     const cDesc = document.getElementById('customDesc').value.trim();
                     
-                    rounds = 1; 
+                    rounds = 1; // Custom is typically single round unless complex list logic added
                     time = cTime;
                     
                     customItem = {
                         name: cName,
                         price: cPrice,
-                        increment: cInc, 
+                        increment: cInc, // Optional use in sync
                         desc: cDesc
                     };
                     
-                    
+                    // Override local items for host immediately
                     this.ITEMS = [[cName, cPrice]];
                 }
 
@@ -1145,7 +1190,7 @@
                 this.multiplayerMode = true;
                 this.ROUND_DURATION = time;
                 this.state.numRounds = rounds;
-                this.isReady = true; 
+                this.isReady = true; // Host is always ready
 
                 this.roomRef = this.database.ref('rooms/' + this.currentRoom);
                 
@@ -1157,7 +1202,7 @@
                     joinedAt: Date.now(),
                     isSpectator: !participate,
                     isHost: true,
-                    isReady: true 
+                    isReady: true // Host is ready by default
                 };
 
                 this.roomRef.set({
@@ -1169,7 +1214,7 @@
                         numRounds: rounds,
                         roundTime: time,
                         category: category,
-                        customItem: customItem, 
+                        customItem: customItem, // Save custom details
                         roundStatus: 'waiting'
                     },
                     createdAt: Date.now()
@@ -1183,7 +1228,7 @@
             }
 
             joinRoom() {
-                
+                // ... same join logic, just ensure isReady is false
                 if (!this.firebaseInitialized) { alert('Waiting for connection...'); return; }
                 const user = this.auth.currentUser;
                 if (!user || user.isAnonymous) { alert('Please sign in with Google first'); return; }
@@ -1205,16 +1250,16 @@
                 this.isHost = false;
                 this.hostIsPlaying = true; 
                 this.multiplayerMode = true;
-                this.isReady = false;
+                this.isReady = false; // Joiner is not ready initially
 
                 this.roomRef = this.database.ref('rooms/' + this.currentRoom);
 
                 this.roomRef.once('value').then(snapshot => {
                     if (!snapshot.exists()) {
                         alert('Room not found!');
-                        return;
+                        return; // Stay in lobby
                     }
-                    
+                    // Sync initial state
                     const gs = snapshot.val().gameState;
                     if (gs.category === 'Custom' && gs.customItem) {
                         this.ITEMS = [[gs.customItem.name, gs.customItem.price]];
@@ -1241,7 +1286,7 @@
                 });
             }
 
-            
+            // NEW: Toggle Ready State
             toggleReady() {
                 if (!this.multiplayerMode || this.isHost) return;
                 
@@ -1283,12 +1328,12 @@
                         onlinePlayers.forEach(p => {
                             this.state.purses[p.name] = p.purse || 0;
                         });
-                        this.renderPlayers(playersData); 
+                        this.renderPlayers(playersData); // Pass data to render readiness
                         this.updateLeaderboard();
                         
-                        
+                        // Check readiness for Host Start Button
                         if (this.isHost) {
-                            
+                            // Are all NON-SPECTATOR players ready?
                             const activePlayers = onlinePlayers.filter(p => !p.isSpectator);
                             const allReady = activePlayers.every(p => p.isReady);
                             const startBtn = document.getElementById('multiplayerStartBtn');
@@ -1312,10 +1357,10 @@
                     const gameState = snapshot.val();
                     if (!gameState) return;
 
-                    
+                    // Sync Item Info
                     if (gameState.customItem) {
                         this.ITEMS = [[gameState.customItem.name, gameState.customItem.price]];
-                       
+                        // Update Description
                         const descEl = document.getElementById('itemDesc');
                         if (descEl) descEl.textContent = gameState.customItem.desc || "";
                     } else if (gameState.category && this.CATEGORY_SETS[gameState.category]) {
@@ -1327,7 +1372,7 @@
                         this.syncNewRound(gameState);
                     } else if (gameState.started && !this.state.timerRunning && gameState.timerRunning) {
                         this.state.currentItem = gameState.currentItem;
-                        
+                        // NEW: Ensure update here in case of mid-game join
                         if (this.state.currentItem) {
                             this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                             this.updateItemUI();
@@ -1340,7 +1385,7 @@
                         this.state.highestBid = gameState.highestBid;
                         this.endRound(true);
                     } else if (gameState.timerRunning && this.state.timerRunning) {
-                        
+                        // Just update the end time, the interval will handle the rest automatically
                         this.state.roundEndTime = gameState.roundEndTime;
                     }
                 });
@@ -1375,7 +1420,7 @@
                          isSpectator = true; 
                     }
                     
-                    
+                    // Status Icon Logic
                     let statusIcon = '';
                     if (this.multiplayerMode) {
                         if (isHost) statusIcon = '👑';
@@ -1398,7 +1443,7 @@
                     
                     const specBadge = isSpectator ? `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md dark:bg-blue-900/40 dark:text-blue-300">SPECTATOR</span>` : '';
 
-                  
+                    // HOST CONTROLS - KICK BUTTON
                     let hostActions = '';
                     if (this.isHost && this.multiplayerMode && player !== this.currentPlayerName) {
                         hostActions = `
@@ -1460,7 +1505,7 @@
                             </div>
                             <div class="text-right">
                                 <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Purse</span>
-                                <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[player] || 0)}</span>
+                                <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">${Math.floor(this.state.purses[player] || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</span>
                             </div>
                         </div>
                         ${controlsHtml}
@@ -1559,14 +1604,16 @@
                 this.renderPlayers();
             }
 
-           
+            // ==========================================
+            //  CORE GAMEPLAY METHODS (Previously Missing)
+            // ==========================================
 
             activateAIForPlayer(name, strategy) {
                 this.state.aiPlayers[name] = { active: true, strategy: strategy };
                 
                 if (this.state.aiTimers[name]) clearInterval(this.state.aiTimers[name]);
                 
-                
+                // AI Decision Interval (2s)
                 this.state.aiTimers[name] = setInterval(() => {
                     this.aiLogic(name);
                 }, 2000);
@@ -1580,7 +1627,7 @@
             aiLogic(botName) {
                 if (!this.state.timerRunning || this.state.roundStatus !== 'active') return;
                 
-                
+                // Don't bid if I'm already winning
                 if (this.state.highestBidder === botName) return;
 
                 const ai = this.state.aiPlayers[botName];
@@ -1588,52 +1635,53 @@
                 const currentBid = this.state.highestBid;
                 const minBid = currentBid + this.state.minIncrement;
 
-                if (myPurse < minBid) return; 
+                if (myPurse < minBid) return; // Broke
 
                 let shouldBid = false;
                 let bidAmount = minBid;
 
-                
+                // Logic based on strategy
                 const timeLeft = this.state.roundTimeLeft;
                 const randomChance = Math.random();
 
                 switch (ai.strategy) {
                     case 'Aggressive':
-                        
+                        // Bids immediately if losing, jumps by 2x increment sometimes
                         if (randomChance > 0.3) {
                             shouldBid = true;
                             if (randomChance > 0.8) bidAmount += this.state.minIncrement; 
                         }
                         break;
                     case 'Conservative':
-                        
+                        // Only bids if price is low compared to purse
                         if (minBid < myPurse * 0.5 && randomChance > 0.6) shouldBid = true;
                         break;
                     case 'Sniper':
-                        
+                        // Only bids in last 5 seconds
                         if (timeLeft <= 5 && randomChance > 0.1) shouldBid = true;
                         break;
                     case 'Rapid':
-                        
+                        // High frequency bidding
                         if (randomChance > 0.2) shouldBid = true;
                         break;
-                    default: 
+                    default: // Incremental/Standard
                         if (randomChance > 0.5) shouldBid = true;
                         break;
                 }
 
                 if (shouldBid) {
-                    this.placeBid(botName, bidAmount, true); 
+                    this.placeBid(botName, bidAmount, true); // True flag for AI to skip alerts
                 }
             }
 
             syncNewRound(gameState) {
                 this.state.currentRound = gameState.currentRound;
-                this.state.currentItem = gameState.currentItem; 
+                this.state.currentItem = gameState.currentItem; // [name, price]
                 this.state.highestBid = gameState.highestBid;
                 this.state.highestBidder = gameState.highestBidder;
                 this.state.roundStatus = gameState.roundStatus;
                 
+                // Recalculate min increment based on base price (item price) - 2% logic
                 if (this.state.currentItem) {
                     this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                 }
@@ -1644,21 +1692,24 @@
 
                 this.updateItemUI();
                 
-                document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
+                // Use Indian formatting for logs/display
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+
+                document.getElementById('highestBid').innerText = fmt(this.state.highestBid);
                 document.getElementById('highestBidderName').innerText = this.state.highestBidder || '-';
                 document.getElementById('auctionLog').innerHTML = '';
                 
                 this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem ? this.state.currentItem[0] : 'Unknown'}`);
 
                 if (gameState.timerRunning) {
-                    
-                    this.state.roundEndTime = gameState.roundEndTime; 
-                    this.state.roundTimeLeft = this.ROUND_DURATION; 
+                    // Sync timer
+                    this.state.roundEndTime = gameState.roundEndTime; // Must copy this!
+                    this.state.roundTimeLeft = this.ROUND_DURATION; // Reset initial display
                     this.startTimer();
                 }
                 
                 this.renderPlayers();
-                this.updateAIAnalysis(); 
+                this.updateAIAnalysis(); // Added
             }
 
             updateItemUI() {
@@ -1671,8 +1722,11 @@
                 const minEl = document.getElementById('minIncrement');
                 const nameEl = document.getElementById('itemName');
                 
-                if (baseEl) baseEl.innerText = '₹' + price.toLocaleString();
-                if (minEl) minEl.innerText = '₹' + minInc.toLocaleString();
+                // Use Indian Format
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+
+                if (baseEl) baseEl.innerText = fmt(price);
+                if (minEl) minEl.innerText = fmt(minInc);
                 if (nameEl) nameEl.innerText = this.state.currentItem[0];
             }
 
@@ -1682,7 +1736,7 @@
                 
                 if (!analysisPanel || !tipsPanel) return;
 
-                
+                // 1. Analyze Market Aggression
                 let maxBids = 0;
                 let aggressivePlayer = 'None';
                 
@@ -1700,12 +1754,15 @@
                     </div>
                 `;
 
-                
+                // Add spending leader
                 let maxSpent = 0;
                 let bigSpender = 'None';
-               
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+
+                // Calculate spending based on initial vs current purse
                 Object.keys(this.state.purses).forEach(p => {
-                    
+                    // Need initial purses to calculate spent properly, assuming everyone started roughly same or tracking via wins
+                    // For now, simpler: check wins price total
                     let spent = this.state.roundResults
                         .filter(r => r.winner === p)
                         .reduce((sum, r) => sum + r.price, 0);
@@ -1719,7 +1776,7 @@
                     analysisHtml += `
                         <div>
                             <span class="block text-slate-400 uppercase text-[10px] font-bold">Big Spender</span>
-                            <span class="text-gold-500 font-bold">${bigSpender} (₹${maxSpent.toLocaleString()})</span>
+                            <span class="text-gold-500 font-bold">${bigSpender} (${fmt(maxSpent)})</span>
                         </div>
                     `;
                 } else {
@@ -1728,7 +1785,7 @@
 
                 analysisPanel.innerHTML = analysisHtml;
 
-                
+                // 2. Generate Personal Tips
                 if (!this.currentPlayerName) return;
 
                 const myPurse = this.state.purses[this.currentPlayerName] || 0;
@@ -1765,29 +1822,32 @@
 
                 this.state.currentRound++;
                 
-                
+                // Pick Item
                 const itemIndex = (this.state.currentRound - 1) % this.ITEMS.length;
                 this.state.currentItem = this.ITEMS[itemIndex];
                 
-                
+                // Reset Round State
                 this.state.highestBid = this.state.currentItem[1];
                 this.state.highestBidder = null;
-                
+                // CHANGED: 2% of BASE PRICE (Initial Item Price)
                 this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                 this.state.roundStatus = 'active';
                 this.state.roundTimeLeft = this.ROUND_DURATION;
-                
+                // NEW: Set absolute end time
                 this.state.roundEndTime = Date.now() + (this.ROUND_DURATION * 1000); 
 
                 this.updateItemUI();
-                document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
+                
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+                document.getElementById('highestBid').innerText = fmt(this.state.highestBid);
+                
                 document.getElementById('highestBidderName').innerText = '-';
                 document.getElementById('auctionLog').innerHTML = '';
                 
                 this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem[0]}`);
 
                 if (this.multiplayerMode && this.isHost) {
-                    
+                    // Sync to Firebase
                     this.roomRef.child('gameState').update({
                         currentRound: this.state.currentRound,
                         currentItem: this.state.currentItem,
@@ -1801,14 +1861,14 @@
 
                 this.startTimer();
                 this.renderPlayers();
-                this.updateAIAnalysis(); 
+                this.updateAIAnalysis(); // Added
             }
 
             startTimer() {
                 if (this.state.timerInterval) clearInterval(this.state.timerInterval);
                 this.state.timerRunning = true;
                 
-                
+                // For Single Player or Host if roundEndTime wasn't set yet (initial start)
                 if (!this.state.roundEndTime && this.state.roundTimeLeft > 0) {
                     this.state.roundEndTime = Date.now() + (this.state.roundTimeLeft * 1000);
                 }
@@ -1818,15 +1878,15 @@
                 this.state.timerInterval = setInterval(() => {
                     if (!this.state.timerRunning) return;
 
-                    
+                    // Calculate remaining based on target time (Robust against lag/tab switching)
                     const now = Date.now();
                     const diff = this.state.roundEndTime - now;
                     this.state.roundTimeLeft = Math.ceil(diff / 1000);
 
-                    
+                    // Clamp to 0
                     if (this.state.roundTimeLeft < 0) this.state.roundTimeLeft = 0;
                     
-                    
+                    // Format Time 00:00
                     const m = Math.floor(this.state.roundTimeLeft / 60);
                     const s = this.state.roundTimeLeft % 60;
                     timerEl.innerText = `${m}:${s < 10 ? '0'+s : s}`;
@@ -1847,7 +1907,7 @@
             placeBid(player, amountArg = null, isAI = false) {
                 if (this.state.roundStatus !== 'active') return;
                 
-                
+                // NEW: Prevent Consecutive Bidding
                 if (player === this.state.highestBidder) {
                     if (!isAI) this.updateStatus("You are already the highest bidder!", 'error');
                     return;
@@ -1855,7 +1915,7 @@
                 
                 let amount = amountArg;
                 if (amount === null) {
-                    
+                    // Get from input
                     const input = document.getElementById(`bid-${player}`);
                     if (input) amount = parseFloat(input.value);
                 }
@@ -1865,7 +1925,7 @@
                 const minBid = this.state.highestBid + this.state.minIncrement;
                 const purse = this.state.purses[player];
 
-                
+                // Validation
                 if (amount < minBid) {
                     if (!isAI) this.updateStatus(`Bid too low! Min: ₹${minBid}`, 'error');
                     return;
@@ -1875,30 +1935,31 @@
                     return;
                 }
 
-                
+                // ANTI-SNIPING LOGIC (Adds 10s if bid in last 5s)
                 if (this.state.roundTimeLeft <= 5) {
                     this.state.roundTimeLeft += 10;
                     this.updateStatus("ANTI-SNIPING! +10 Seconds added.");
-                    
+                    // Host Syncs new time to all clients
                     if (this.multiplayerMode && this.isHost) {
                          const newEndTime = Date.now() + (this.state.roundTimeLeft * 1000);
                          this.roomRef.child('gameState').update({ roundEndTime: newEndTime });
                     }
                 }
 
-               
+                // Execute Bid
                 this.state.highestBid = amount;
                 this.state.highestBidder = player;
                 this.state.bidCounts[player] = (this.state.bidCounts[player] || 0) + 1; // Track count
                 
-                
-                document.getElementById('highestBid').innerText = '₹' + amount.toLocaleString();
+                // Update UI
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+                document.getElementById('highestBid').innerText = fmt(amount);
                 document.getElementById('highestBidderName').innerText = player;
                 this.logAction(player, amount);
                 this.renderPlayers();
-                this.updateAIAnalysis(); 
+                this.updateAIAnalysis(); // Update stats
 
-                
+                // Multiplayer Sync
                 if (this.multiplayerMode) {
                     this.roomRef.child('bids').push({
                         player: player,
@@ -1926,7 +1987,7 @@
             }
 
             endRound(isRemoteTrigger = false) {
-                
+                // PREVENT DUPLICATES: Check if this round is already processed
                 if (this.state.roundResults.some(r => r.round === this.state.currentRound)) return;
 
                 clearInterval(this.state.timerInterval);
@@ -1935,11 +1996,12 @@
 
                 const winner = this.state.highestBidder;
                 const price = this.state.highestBid;
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
                 if (winner) {
                     this.state.purses[winner] -= price;
                     
-                    
+                    // Stats
                     const winObj = {
                         round: this.state.currentRound,
                         item: this.state.currentItem[0],
@@ -1948,9 +2010,9 @@
                     };
                     this.state.roundResults.push(winObj);
                     
-                    this.updateStatus(`${winner} won ${this.state.currentItem[0]} for ₹${price}!`);
+                    this.updateStatus(`${winner} won ${this.state.currentItem[0]} for ${fmt(price)}!`);
                     
-                    
+                    // Confetti
                     confetti({
                         particleCount: 100,
                         spread: 70,
@@ -1977,16 +2039,17 @@
                 div.innerText = msg;
                 container.appendChild(div);
                 
-                
+                // Auto remove
                 setTimeout(() => div.remove(), 3000);
             }
 
             logAction(player, amount) {
                 const log = document.getElementById('auctionLog');
                 const entry = document.createElement('div');
-                
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+                // Simplified log style - No boxes, just text
                 entry.className = "text-xs py-1 text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800";
-                entry.innerHTML = `<strong class="text-slate-800 dark:text-slate-200">${player}</strong> bid <span class="text-gold-600 dark:text-gold-400 font-mono">₹${amount.toLocaleString()}</span>`;
+                entry.innerHTML = `<strong class="text-slate-800 dark:text-slate-200">${player}</strong> bid <span class="text-gold-600 dark:text-gold-400 font-mono">${fmt(amount)}</span>`;
                 log.prepend(entry);
             }
 
@@ -2000,14 +2063,15 @@
             updateLeaderboard() {
                 const tbody = document.getElementById('leaderboardBody');
                 tbody.innerHTML = '';
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
                 
-                
+                // Calculate wins
                 const winCounts = {};
                 this.state.roundResults.forEach(r => {
                     winCounts[r.winner] = (winCounts[r.winner] || 0) + 1;
                 });
 
-                
+                // Sort players by purse desc
                 const sorted = this.state.players.slice().sort((a, b) => this.state.purses[b] - this.state.purses[a]);
 
                 sorted.forEach(p => {
@@ -2016,14 +2080,14 @@
                     tr.innerHTML = `
                         <td class="p-3 font-medium text-slate-700 dark:text-slate-300">${p}</td>
                         <td class="p-3 text-center">${winCounts[p] || 0}</td>
-                        <td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[p]).toLocaleString()}</td>
+                        <td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">${fmt(this.state.purses[p])}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
 
             showFinalResults() {
-                
+                // Find winner
                 const winCounts = {};
                 this.state.roundResults.forEach(r => {
                     winCounts[r.winner] = (winCounts[r.winner] || 0) + 1;
@@ -2031,8 +2095,9 @@
 
                 let maxWins = -1;
                 let winner = "No One";
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
                 
-                
+                // Tie breaker: Remaining purse
                 for(const p of this.state.players) {
                     const wins = winCounts[p] || 0;
                     if(wins > maxWins) {
@@ -2047,9 +2112,9 @@
 
                 document.getElementById('winnerName').innerText = winner;
                 document.getElementById('winnerWins').innerText = maxWins;
-                document.getElementById('winnerPurse').innerText = '₹' + Math.floor(this.state.purses[winner]).toLocaleString();
+                document.getElementById('winnerPurse').innerText = fmt(this.state.purses[winner]);
                 
-                
+                // POPULATE TABLE HISTORY
                 const historyBody = document.getElementById('roundHistoryBody');
                 historyBody.innerHTML = '';
                 this.state.roundResults.forEach(r => {
@@ -2059,7 +2124,7 @@
                         <td class="p-3 border-b border-slate-100 dark:border-slate-800">${r.round}</td>
                         <td class="p-3 border-b border-slate-100 dark:border-slate-800 font-medium">${r.item}</td>
                         <td class="p-3 border-b border-slate-100 dark:border-slate-800 font-bold text-slate-800 dark:text-white">${r.winner}</td>
-                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 text-right font-mono text-gold-600 dark:text-gold-400">₹${r.price.toLocaleString()}</td>
+                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 text-right font-mono text-gold-600 dark:text-gold-400">${fmt(r.price)}</td>
                     `;
                     historyBody.appendChild(row);
                 });
@@ -2080,22 +2145,23 @@
             }
 
             handleRemoteBid(bidData) {
-                
+                // Just update UI to match remote state
                 this.state.highestBid = bidData.amount;
                 this.state.highestBidder = bidData.player;
                 
-                
+                // Track bid count for remote players too for analytics
                 this.state.bidCounts[bidData.player] = (this.state.bidCounts[bidData.player] || 0) + 1;
                 
-                document.getElementById('highestBid').innerText = '₹' + bidData.amount.toLocaleString();
+                const fmt = (n) => n.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+                document.getElementById('highestBid').innerText = fmt(bidData.amount);
                 document.getElementById('highestBidderName').innerText = bidData.player;
                 this.logAction(bidData.player, bidData.amount);
                 this.renderPlayers();
-                this.updateAIAnalysis(); 
+                this.updateAIAnalysis(); // Update analytics
             }
 
             updateMultiplayerUI() {
-            
+                // FIX: Room Code Display
                 const info = document.getElementById('multiplayerRoomInfo');
                 info.innerHTML = `
                     <div class="flex flex-col items-end">
@@ -2125,7 +2191,7 @@
             }
         }
 
-        
+        // Initialize the game controller
         window.gameController = new GameController();
     </script>
 </body>
