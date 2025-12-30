@@ -143,7 +143,7 @@
     </div>
 
     <!-- Instructions Buffer Page -->
-    <div id="instructionsPage" class="fixed inset-0 z-50 hidden bg-black text-white flex-col items-center justify-center p-4">
+    <div id="instructionsPage" class="fixed inset-0 z-50 hidden bg-black/95 text-white flex-col items-center justify-center p-4">
         <div class="max-w-2xl w-full bg-slate-900 border border-gold-500/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden animate-slide-up">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
             
@@ -356,7 +356,6 @@
                     <div class="flex flex-col gap-3 w-full lg:w-auto">
                         <!-- Single Player Setup Controls -->
                         <div id="singlePlayerControls" class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-gold-500/20 flex flex-col md:flex-row gap-3 items-end shadow-lg hidden">
-                            <!-- Existing SP controls... -->
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Your Name</label>
                                 <input type="text" id="spNameInput" placeholder="Enter Name" class="w-full md:w-32 bg-black/40 border border-white/10 text-white placeholder-slate-600 text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:border-transparent focus:outline-none">
@@ -368,7 +367,6 @@
                             </div>
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Opponent Bot</label>
-                                <!-- FIXED: ALL 7 STRATEGIES ADDED HERE -->
                                 <select id="spBotSelect" class="w-full md:w-48 bg-black/40 border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-gold-500 focus:outline-none">
                                     <option value="Incremental">Incremental (Standard)</option>
                                     <option value="Aggressive">Aggressive (Risky)</option>
@@ -379,13 +377,14 @@
                                     <option value="Rapid">Rapid (Fast Bidder)</option>
                                 </select>
                             </div>
-                            <button onclick="window.gameController.startSinglePlayerGame()" class="w-full md:w-auto px-6 py-2 h-[38px] bg-gradient-to-b from-gold-400 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black font-bold rounded-lg shadow-lg hover:shadow-gold-500/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"><span>⚔️</span> Duel!</button>
+                            <button onclick="window.gameController.startSinglePlayerGame()" class="w-full md:w-auto px-6 py-2 h-[38px] bg-gradient-to-b from-gold-400 to-gold-600 hover:from-gold-300 hover:to-gold-500 text-black font-bold rounded-lg shadow-lg hover:shadow-gold-500/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2">
+                                <span>⚔️</span> Duel!
+                            </button>
                         </div>
 
                         <!-- Multiplayer Controls -->
                         <div id="multiplayerStatus" class="w-full hidden">
                             <div class="flex flex-col gap-2 items-center md:items-end">
-                                <!-- UPDATED: High Visibility Room Code -->
                                 <div id="multiplayerRoomInfo" class="hidden"></div>
                                 <div id="readyCheckArea" class="hidden flex items-center gap-2">
                                     <button id="btnPlayerReady" onclick="window.gameController.toggleReady()" class="px-6 py-2 bg-slate-700 hover:bg-emerald-600 text-white font-bold rounded-lg transition-all shadow-md">
@@ -402,24 +401,32 @@
             </div>
         </header>
 
-        <!-- (Rest of Main Content Structure - unchanged for brevity but included in full file) -->
         <main class="container mx-auto px-4 py-8">
             <div id="noticeContainer"></div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-                <!-- Players Panel -->
+                
                 <section class="lg:col-span-3 flex flex-col gap-4 px-2">
                     <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-gold-50 flex items-center gap-2"><span class="bg-slate-200 text-slate-700 p-1.5 rounded-lg dark:bg-gold-900/40 dark:text-gold-400">👥</span> Players</h2>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-gold-50 flex items-center gap-2">
+                            <span class="bg-slate-200 text-slate-700 p-1.5 rounded-lg dark:bg-gold-900/40 dark:text-gold-400">👥</span> 
+                            Players
+                        </h2>
                         <span id="playerCountBadge" class="hidden text-xs font-semibold bg-slate-200 text-slate-600 px-2 py-1 rounded-full dark:bg-slate-800 dark:text-slate-400 border dark:border-slate-700">0 Active</span>
                     </div>
+                    
                     <div id="playersPanel" class="flex flex-col gap-4 max-h-[calc(100vh-250px)] overflow-y-auto overflow-x-visible custom-scrollbar pr-2 pb-20">
-                        <div class="text-center p-8 bg-white dark:bg-dark-900 rounded-xl border border-dashed border-gray-300 dark:border-slate-700"><p class="text-gray-400 dark:text-slate-500">Waiting for setup...</p></div>
+                        <div class="text-center p-8 bg-white dark:bg-dark-900 rounded-xl border border-dashed border-gray-300 dark:border-slate-700">
+                            <p class="text-gray-400 dark:text-slate-500">Waiting for setup...</p>
+                        </div>
                     </div>
                 </section>
-                <!-- Game Area -->
+
                 <section class="lg:col-span-6 flex flex-col gap-6">
+                    
                     <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-gold-500/30 relative group">
                         <div class="h-1 w-full bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
+                        
                         <div class="p-6 md:p-8">
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                                 <div>
@@ -427,70 +434,133 @@
                                     <div id="itemName" class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight">Waiting for round...</div>
                                     <div id="itemDesc" class="text-sm text-slate-500 dark:text-slate-400 mt-1 italic"></div>
                                 </div>
-                                <div id="timer" class="text-4xl font-black text-slate-700 dark:text-white font-mono tracking-tighter">00:00</div>
+                                <div id="timer" class="text-4xl font-black text-slate-700 dark:text-white font-mono tracking-tighter">
+                                    00:00
+                                </div>
                             </div>
+
                             <div class="grid grid-cols-2 gap-4 mb-6">
-                                <div class="bg-slate-50 dark:bg-black/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800"><span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Base Price</span><div id="basePrice" class="text-lg font-bold text-slate-700 dark:text-slate-200 font-mono">₹0</div></div>
-                                <div class="bg-slate-50 dark:bg-black/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800"><span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Min Increment</span><div id="minIncrement" class="text-lg font-bold text-slate-700 dark:text-slate-200 font-mono">₹0</div></div>
+                                <div class="bg-slate-50 dark:bg-black/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Base Price</span>
+                                    <div id="basePrice" class="text-lg font-bold text-slate-700 dark:text-slate-200 font-mono">₹0</div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-black/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Min Increment</span>
+                                    <div id="minIncrement" class="text-lg font-bold text-slate-700 dark:text-slate-200 font-mono">₹0</div>
+                                </div>
                             </div>
+
                             <div class="bg-gradient-to-br from-slate-900 to-black text-white p-5 rounded-xl shadow-2xl border border-slate-800 relative overflow-hidden">
                                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gold-500 opacity-10 rounded-full blur-2xl animate-pulse"></div>
+                                
                                 <div class="relative z-10 flex justify-between items-end">
-                                    <div><p class="text-gold-500/80 text-xs font-bold uppercase tracking-widest mb-1">Highest Bid</p><div id="highestBid" class="text-4xl font-black text-white tracking-tight">₹0</div></div>
-                                    <div class="text-right"><p class="text-slate-500 text-xs mb-1">Held By</p><div id="highestBidderName" class="font-bold text-lg text-gold-200">-</div></div>
+                                    <div>
+                                        <p class="text-gold-500/80 text-xs font-bold uppercase tracking-widest mb-1">Highest Bid</p>
+                                        <div id="highestBid" class="text-4xl font-black text-white tracking-tight">₹0</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-slate-500 text-xs mb-1">Held By</p>
+                                        <div id="highestBidderName" class="font-bold text-lg text-gold-200">-</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Logs -->
+
                     <div class="flex-1 flex flex-col bg-white dark:bg-dark-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden min-h-[400px]">
-                        <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-black/20 flex justify-between items-center"><h2 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2"><span class="text-xl">📋</span> Live Log</h2><span class="text-xs text-slate-400 font-mono">SECURE FEED</span></div>
-                        <div id="auctionLog" class="flex-1 p-4 overflow-y-auto font-mono text-sm space-y-2 custom-scrollbar bg-slate-50 dark:bg-black/50"><div class="text-center text-slate-400 py-8">Awaiting auction start...</div></div>
+                        <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-black/20 flex justify-between items-center">
+                            <h2 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                                <span class="text-xl">📋</span> Live Log
+                            </h2>
+                            <span class="text-xs text-slate-400 font-mono">SECURE FEED</span>
+                        </div>
+                        
+                        <div id="auctionLog" class="flex-1 p-4 overflow-y-auto font-mono text-sm space-y-2 custom-scrollbar bg-slate-50 dark:bg-black/50">
+                            <div class="text-center text-slate-400 py-8">Awaiting auction start...</div>
+                        </div>
+
                         <div class="p-4 bg-white dark:bg-dark-900 border-t border-slate-200 dark:border-slate-800">
                             <div class="grid grid-cols-3 gap-3">
-                                <button id="btnEndRound" onclick="window.gameController.endRound()" class="col-span-1 px-4 py-3 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-900/50 font-bold rounded-xl transition-colors text-sm">⏹ End Round</button>
-                                <button id="btnNextRound" onclick="window.gameController.nextRound()" class="col-span-1 px-4 py-3 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 font-bold rounded-xl transition-colors text-sm">⏭ Next Round</button>
-                                <button onclick="window.gameController.showFinalResults()" class="col-span-1 px-4 py-3 bg-gold-50 text-gold-800 hover:bg-gold-100 dark:bg-gold-900/20 dark:text-gold-300 dark:hover:bg-gold-900/40 border border-gold-200 dark:border-gold-900/50 font-bold rounded-xl transition-colors text-sm">📊 Results</button>
+                                <button id="btnEndRound" onclick="window.gameController.endRound()" class="col-span-1 px-4 py-3 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-900/50 font-bold rounded-xl transition-colors text-sm">
+                                    ⏹ End Round
+                                </button>
+                                <button id="btnNextRound" onclick="window.gameController.nextRound()" class="col-span-1 px-4 py-3 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 font-bold rounded-xl transition-colors text-sm">
+                                    ⏭ Next Round
+                                </button>
+                                <button onclick="window.gameController.showFinalResults()" class="col-span-1 px-4 py-3 bg-gold-50 text-gold-800 hover:bg-gold-100 dark:bg-gold-900/20 dark:text-gold-300 dark:hover:bg-gold-900/40 border border-gold-200 dark:border-gold-900/50 font-bold rounded-xl transition-colors text-sm">
+                                    📊 Results
+                                </button>
                             </div>
                         </div>
                     </div>
+
                 </section>
-                <!-- Right Info Panel -->
+
                 <section class="lg:col-span-3 flex flex-col gap-6">
+                    
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-md border-l-4 border-slate-500 dark:border-slate-400 overflow-hidden">
-                        <div class="p-3 bg-slate-100 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center"><h2 class="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2"><span>🛡️</span> Security</h2></div>
+                        <div class="p-3 bg-slate-100 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                            <h2 class="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2">
+                                <span>🛡️</span> Security
+                            </h2>
+                        </div>
                         <div id="fairnessLog" class="p-3 h-32 overflow-y-auto text-xs text-slate-600 dark:text-slate-400 space-y-1 custom-scrollbar"></div>
                     </div>
+
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-md border-l-4 border-gold-500 overflow-hidden">
-                        <div class="p-3 bg-gold-50 dark:bg-gold-900/10 border-b border-gold-100 dark:border-gold-900/20"><h2 class="font-bold text-gold-800 dark:text-gold-400 text-sm flex items-center gap-2"><span>💡</span> AI Analysis</h2></div>
+                        <div class="p-3 bg-gold-50 dark:bg-gold-900/10 border-b border-gold-100 dark:border-gold-900/20">
+                            <h2 class="font-bold text-gold-800 dark:text-gold-400 text-sm flex items-center gap-2">
+                                <span>💡</span> AI Analysis
+                            </h2>
+                        </div>
                         <div id="strategyPanel" class="p-3 overflow-y-auto h-32 text-xs space-y-2 custom-scrollbar"></div>
                     </div>
+
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-md border-l-4 border-slate-400 dark:border-slate-600 overflow-hidden">
-                        <div class="p-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700"><h2 class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center gap-2"><span>🎯</span> Tips</h2></div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
+                            <h2 class="font-bold text-slate-700 dark:text-slate-300 text-sm flex items-center gap-2">
+                                <span>🎯</span> Tips
+                            </h2>
+                        </div>
                         <div id="suggestionsPanel" class="p-3 overflow-y-auto h-32 text-xs space-y-2 custom-scrollbar"></div>
                     </div>
+
                     <div class="bg-white dark:bg-dark-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <div class="p-3 bg-slate-50 dark:bg-black/30 border-b border-slate-200 dark:border-slate-800"><h2 class="font-bold text-slate-700 dark:text-slate-200 text-sm">🏅 Top Bidders</h2></div>
+                        <div class="p-3 bg-slate-50 dark:bg-black/30 border-b border-slate-200 dark:border-slate-800">
+                            <h2 class="font-bold text-slate-700 dark:text-slate-200 text-sm">🏅 Top Bidders</h2>
+                        </div>
                         <div class="overflow-x-auto max-h-48 overflow-y-auto custom-scrollbar">
                             <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold uppercase sticky top-0"><tr><th class="p-3">Player</th><th class="p-3 text-center">Wins</th><th class="p-3 text-right">Purse</th></tr></thead>
-                                <tbody id="leaderboardBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300"></tbody>
+                                <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold uppercase sticky top-0">
+                                    <tr>
+                                        <th class="p-3">Player</th>
+                                        <th class="p-3 text-center">Wins</th>
+                                        <th class="p-3 text-right">Purse</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboardBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+                                </tbody>
                             </table>
                         </div>
                     </div>
+
                 </section>
             </div>
         </main>
 
         <div class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-black/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-3 z-40">
             <div class="container mx-auto flex justify-between items-center">
-                <span id="statusBar" class="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> System Ready</span>
-                <button onclick="window.gameController.toggleDarkMode()" class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-gold-400 border dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🌙 / ☀️ Theme</button>
+                <span id="statusBar" class="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> System Ready
+                </span>
+                <button onclick="window.gameController.toggleDarkMode()" class="text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-gold-400 border dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    🌙 / ☀️ Theme
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modals (All present) -->
+    <!-- Victory Modal -->
     <div id="victoryModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-md transition-opacity opacity-0 pointer-events-none">
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-lg mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative">
             <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent"></div>
@@ -498,14 +568,27 @@
                 <div class="text-6xl mb-4 animate-bounce">🏆</div>
                 <h2 class="text-4xl font-black text-gold-500 mb-2">WINNER!</h2>
                 <h3 id="winnerName" class="text-3xl font-bold text-slate-800 dark:text-white mb-6">Player Name</h3>
+                
                 <div class="bg-slate-50 dark:bg-black/40 rounded-xl p-4 mb-6 border border-slate-200 dark:border-slate-800">
                     <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div><span class="block text-slate-400 text-xs font-bold uppercase">Wins</span><span id="winnerWins" class="text-xl font-bold text-slate-800 dark:text-white">0</span></div>
-                        <div><span class="block text-slate-400 text-xs font-bold uppercase">Purse Left</span><span id="winnerPurse" class="text-xl font-bold text-emerald-500">₹0</span></div>
-                        <div><span class="block text-slate-400 text-xs font-bold uppercase">Efficiency</span><span class="text-xl font-bold text-gold-500">S+</span></div>
+                        <div>
+                            <span class="block text-slate-400 text-xs font-bold uppercase">Wins</span>
+                            <span id="winnerWins" class="text-xl font-bold text-slate-800 dark:text-white">0</span>
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-xs font-bold uppercase">Purse Left</span>
+                            <span id="winnerPurse" class="text-xl font-bold text-emerald-500">₹0</span>
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-xs font-bold uppercase">Efficiency</span>
+                            <span class="text-xl font-bold text-gold-500">S+</span>
+                        </div>
                     </div>
                 </div>
-                <button onclick="window.gameController.closeVictoryModal()" class="w-full px-6 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">Continue to Lobby</button>
+
+                <button onclick="window.gameController.closeVictoryModal()" class="w-full px-6 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
+                    Continue to Lobby
+                </button>
             </div>
         </div>
     </div>
@@ -519,7 +602,13 @@
                     <div>
                         <label class="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2">Strategy Profile</label>
                         <select id="aiStrategy" class="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-white focus:ring-2 focus:ring-gold-500 focus:outline-none">
-                            <option>Incremental</option><option>Aggressive</option><option>Conservative</option><option>Passive</option><option>Adaptive</option><option>Sniper</option><option>Rapid</option>
+                            <option>Incremental</option>
+                            <option>Aggressive</option>
+                            <option>Conservative</option>
+                            <option>Passive</option>
+                            <option>Adaptive</option>
+                            <option>Sniper</option>
+                            <option>Rapid</option>
                         </select>
                     </div>
                     <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
@@ -555,7 +644,13 @@
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Strategy</label>
                         <select id="newAIStrategy" class="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-700 dark:text-white focus:ring-2 focus:ring-gold-500 focus:outline-none">
-                            <option>Incremental</option><option>Aggressive</option><option>Conservative</option><option>Passive</option><option>Adaptive</option><option>Sniper</option><option>Rapid</option>
+                            <option>Incremental</option>
+                            <option>Aggressive</option>
+                            <option>Conservative</option>
+                            <option>Passive</option>
+                            <option>Adaptive</option>
+                            <option>Sniper</option>
+                            <option>Rapid</option>
                         </select>
                     </div>
                     <label class="flex items-center gap-3 mt-2">
@@ -649,6 +744,10 @@
             async initializeFirebase() {
                 // ==================================================================================
                 // ⚠️ IMPORTANT: YOU MUST REPLACE THIS CONFIG WITH YOUR OWN FROM FIREBASE CONSOLE ⚠️
+                // 1. Go to Firebase Console > Project Settings > General
+                // 2. Scroll to "Your Apps" > "SDK Setup and Configuration"
+                // 3. Select "Config" and copy the object to replace the one below.
+                // ==================================================================================
                 const fallbackConfig = {
                     apiKey: "AIzaSyDfrW6SMExgRnHjSM5bfCyQ4tRuBKIydqQ", // REPLACE THIS
                     authDomain: "auction-bidding-simulator.firebaseapp.com", // REPLACE THIS
@@ -670,16 +769,29 @@
                     this.database = firebase.database();
 
                     this.auth.onAuthStateChanged((user) => {
+                        // Strict check: User must exist AND NOT be anonymous
                         if (user && !user.isAnonymous) {
                             console.log("✅ Auth Ready (Google):", user.uid);
                             this.firebaseInitialized = true;
+                            
+                            // If user logs in while in multiplayer flow, auto-advance to lobby
                             if (this.inMultiplayerFlow) {
                                 this.showLobby();
                             }
                         } else {
+                            // If user is anonymous, Force Sign Out to clear cached session
                             if (user && user.isAnonymous) {
+                                console.log("Cleaning up anonymous session to force Google Login...");
                                 this.auth.signOut();
-                                return;
+                                return; // Listener will trigger again with null
+                            }
+
+                            // Show login button if not logged in
+                            const authSec = document.getElementById('googleAuthSection');
+                            const multiBtns = document.getElementById('multiplayerButtons');
+                            if(authSec && multiBtns) {
+                                authSec.classList.remove('hidden');
+                                multiBtns.classList.add('hidden');
                             }
                         }
                     });
@@ -713,13 +825,15 @@
                 });
             }
 
+            // Step 1: Click Button on Entry Page -> Show Instructions
             showInstructions(mode) {
                 this.selectedPendingMode = mode;
                 const modal = document.getElementById('instructionsPage');
+                const title = document.getElementById('instructTitle');
                 const content = document.getElementById('instructContent');
                 
                 if (mode === 'single') {
-                    document.getElementById('instructTitle').innerHTML = '<span>⚔️</span> Single Player Mission';
+                    title.innerHTML = '<span>⚔️</span> Single Player Mission';
                     content.innerHTML = `
                         <p>Welcome to the solo arena! In this mode, you will test your skills against our AI trading bots.</p>
                         <ul class="list-disc pl-5 space-y-2 mt-4 text-sm text-slate-400">
@@ -730,7 +844,7 @@
                         </ul>
                     `;
                 } else {
-                    document.getElementById('instructTitle').innerHTML = '<span>🌐</span> Multiplayer Protocol';
+                    title.innerHTML = '<span>🌐</span> Multiplayer Protocol';
                     content.innerHTML = `
                         <p>Compete against real people in real-time!</p>
                         <ul class="list-disc pl-5 space-y-2 mt-4 text-sm text-slate-400">
@@ -752,6 +866,7 @@
                 modal.classList.remove('flex');
             }
 
+            // Step 2: Confirm Instructions -> Branch Logic
             confirmInstructions() {
                 this.hideInstructions();
                 const mode = this.selectedPendingMode;
@@ -765,6 +880,7 @@
                 }
             }
 
+            // START Single Player Setup (Shows Main App directly)
             startSinglePlayerSetup() {
                 const entryPage = document.getElementById('entryPage');
                 const mainApp = document.getElementById('mainApp');
@@ -783,6 +899,7 @@
                 badge.classList.add('hidden');
             }
 
+            // --- SINGLE PLAYER START ---
             startSinglePlayerGame() {
                 const nameInput = document.getElementById('spNameInput').value.trim();
                 const purseInput = parseFloat(document.getElementById('spPurseInput').value);
@@ -794,6 +911,7 @@
                 this.currentPlayerName = nameInput;
                 const botName = "Bot_" + botType;
 
+                // Reset state for new game
                 this.state.players = [nameInput, botName];
                 this.state.purses = {
                     [nameInput]: purseInput,
@@ -801,8 +919,7 @@
                 };
                 
                 this.state.aiPlayers = {};
-                // FIXED: THIS FUNCTION IS NOW DEFINED IN CLASS
-                this.activateAIForPlayer(botName, botType); 
+                this.activateAIForPlayer(botName, botType); // THIS FUNCTION IS DEFINED BELOW
 
                 this.state.numRounds = 5;
                 this.state.currentRound = 0;
@@ -847,7 +964,7 @@
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('loginPage').classList.remove('flex');
                 
-                document.getElementById('entryPage').classList.add('hidden');
+                document.getElementById('entryPage').classList.add('hidden'); // Ensure entry is gone
                 
                 document.getElementById('lobbyPage').classList.remove('hidden');
                 document.getElementById('lobbyPage').classList.add('flex');
@@ -892,6 +1009,8 @@
                 return 'ROOM-' + Math.random().toString(36).substr(2, 6).toUpperCase();
             }
 
+            // --- HOST SETUP LOGIC ---
+
             openHostSetup() {
                 if (!this.firebaseInitialized) { alert('Waiting for connection...'); return; }
                 const user = this.auth.currentUser;
@@ -900,7 +1019,9 @@
                 document.getElementById('hostNameInput').value = user.displayName || 'Host';
                 document.getElementById('hostSetupModal').classList.remove('hidden');
                 document.getElementById('hostSetupModal').classList.add('flex');
-                this.switchSetupTab('preset');
+                this.switchSetupTab('preset'); // Default tab
+                
+                // Initialize purse input visibility
                 this.toggleHostPurseInput();
             }
 
@@ -957,7 +1078,7 @@
                 
                 if (!playerName) { alert("Enter a name"); return; }
                 
-                let hostPurse = 50000;
+                let hostPurse = 50000; // Default
                 if (participate) {
                     hostPurse = parseFloat(document.getElementById('hostPurseInput').value);
                     if (isNaN(hostPurse) || hostPurse <= 0) {
@@ -966,6 +1087,7 @@
                     }
                 }
 
+                // Gather settings
                 let rounds, time, category, customItem = null;
 
                 if (this.setupTab === 'preset') {
@@ -974,6 +1096,7 @@
                     time = parseInt(document.getElementById('setupTime').value);
                     this.ITEMS = this.CATEGORY_SETS[category] || this.CATEGORY_SETS['Real Estate'];
                 } else {
+                    // Custom Mode
                     category = 'Custom';
                     const cName = document.getElementById('customItemName').value.trim() || "Custom Item";
                     const cPrice = parseInt(document.getElementById('customBasePrice').value) || 1000;
@@ -981,16 +1104,17 @@
                     const cTime = parseInt(document.getElementById('customDuration').value) || 60;
                     const cDesc = document.getElementById('customDesc').value.trim();
                     
-                    rounds = 1;
+                    rounds = 1; // Custom is typically single round unless complex list logic added
                     time = cTime;
                     
                     customItem = {
                         name: cName,
                         price: cPrice,
-                        increment: cInc,
+                        increment: cInc, // Optional use in sync
                         desc: cDesc
                     };
                     
+                    // Override local items for host immediately
                     this.ITEMS = [[cName, cPrice]];
                 }
 
@@ -1001,7 +1125,7 @@
                 this.multiplayerMode = true;
                 this.ROUND_DURATION = time;
                 this.state.numRounds = rounds;
-                this.isReady = true;
+                this.isReady = true; // Host is always ready
 
                 this.roomRef = this.database.ref('rooms/' + this.currentRoom);
                 
@@ -1013,7 +1137,7 @@
                     joinedAt: Date.now(),
                     isSpectator: !participate,
                     isHost: true,
-                    isReady: true
+                    isReady: true // Host is ready by default
                 };
 
                 this.roomRef.set({
@@ -1025,7 +1149,7 @@
                         numRounds: rounds,
                         roundTime: time,
                         category: category,
-                        customItem: customItem,
+                        customItem: customItem, // Save custom details
                         roundStatus: 'waiting'
                     },
                     createdAt: Date.now()
@@ -1039,6 +1163,7 @@
             }
 
             joinRoom() {
+                // ... same join logic, just ensure isReady is false
                 if (!this.firebaseInitialized) { alert('Waiting for connection...'); return; }
                 const user = this.auth.currentUser;
                 if (!user || user.isAnonymous) { alert('Please sign in with Google first'); return; }
@@ -1060,15 +1185,16 @@
                 this.isHost = false;
                 this.hostIsPlaying = true; 
                 this.multiplayerMode = true;
-                this.isReady = false;
+                this.isReady = false; // Joiner is not ready initially
 
                 this.roomRef = this.database.ref('rooms/' + this.currentRoom);
 
                 this.roomRef.once('value').then(snapshot => {
                     if (!snapshot.exists()) {
                         alert('Room not found!');
-                        return;
+                        return; // Stay in lobby
                     }
+                    // Sync initial state
                     const gs = snapshot.val().gameState;
                     if (gs.category === 'Custom' && gs.customItem) {
                         this.ITEMS = [[gs.customItem.name, gs.customItem.price]];
@@ -1095,6 +1221,7 @@
                 });
             }
 
+            // NEW: Toggle Ready State
             toggleReady() {
                 if (!this.multiplayerMode || this.isHost) return;
                 
@@ -1136,10 +1263,12 @@
                         onlinePlayers.forEach(p => {
                             this.state.purses[p.name] = p.purse || 0;
                         });
-                        this.renderPlayers(playersData);
+                        this.renderPlayers(playersData); // Pass data to render readiness
                         this.updateLeaderboard();
                         
+                        // Check readiness for Host Start Button
                         if (this.isHost) {
+                            // Are all NON-SPECTATOR players ready?
                             const activePlayers = onlinePlayers.filter(p => !p.isSpectator);
                             const allReady = activePlayers.every(p => p.isReady);
                             const startBtn = document.getElementById('multiplayerStartBtn');
@@ -1163,8 +1292,10 @@
                     const gameState = snapshot.val();
                     if (!gameState) return;
 
+                    // Sync Item Info
                     if (gameState.customItem) {
                         this.ITEMS = [[gameState.customItem.name, gameState.customItem.price]];
+                        // Update Description
                         const descEl = document.getElementById('itemDesc');
                         if (descEl) descEl.textContent = gameState.customItem.desc || "";
                     } else if (gameState.category && this.CATEGORY_SETS[gameState.category]) {
@@ -1200,7 +1331,7 @@
 
                 this.state.players.forEach(player => {
                     const isWithdrawn = this.state.withdrawnPlayers[player];
-                    const isMe = (player === this.currentPlayerName); 
+                    const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : true;
                     const isWinning = player === this.state.highestBidder;
                     const isAI = this.state.aiPlayers[player]?.active;
                     
@@ -1228,17 +1359,24 @@
                     
                     const aiBadge = isAI ? 
                         `<span class="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-md dark:bg-slate-700 dark:text-slate-300">BOT</span>` : '';
+                    
+                    const specBadge = isSpectator ? `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md dark:bg-blue-900/40 dark:text-blue-300">SPECTATOR</span>` : '';
 
-                    let statusIcon = '';
-                    if (!isSpectator && !isHost && !isAI) {
-                        statusIcon = isReady 
-                            ? `<span class="text-emerald-500 text-lg" title="Ready">✅</span>` 
-                            : `<span class="text-rose-500 text-lg animate-pulse" title="Not Ready">⏳</span>`;
+                    // HOST CONTROLS - KICK BUTTON
+                    let hostActions = '';
+                    if (this.isHost && this.multiplayerMode && player !== this.currentPlayerName) {
+                        hostActions = `
+                            <button onclick="window.gameController.kickPlayer('${player}')" title="Kick Player" 
+                                class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 hover:bg-rose-100 p-1 rounded transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        `;
                     }
-                    if (isHost) statusIcon = `<span class="text-gold-500 text-lg">👑</span>`;
 
                     let controlsHtml = '';
-                    if (isMe && !isSpectator && !isAI) {
+                    if (isMe && !isSpectator) {
                         controlsHtml = `
                         <div class="mt-4 flex flex-col gap-2">
                             <div class="flex gap-2">
@@ -1256,16 +1394,17 @@
                                 <button onclick="window.gameController.quickBid('${player}', '25')" class="py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors" ${isWithdrawn ? 'disabled' : ''}>+25%</button>
                                 <button onclick="window.gameController.quickBid('${player}', 'max')" class="py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors" ${isWithdrawn ? 'disabled' : ''}>Max</button>
                             </div>
+                            <div class="flex gap-2 mt-1">
+                                <button onclick="window.gameController.openAIConfig('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">⚙ AI</button>
+                                <button onclick="window.gameController.toggleWithdraw('${player}')" class="flex-1 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg text-xs font-semibold transition-colors">
+                                    ${isWithdrawn ? 'Rejoin' : 'Withdraw'}
+                                </button>
+                            </div>
                         </div>`;
                     } else if (isSpectator) {
                         controlsHtml = `<div class="mt-3 p-2 bg-slate-50 dark:bg-black/30 rounded-lg text-center text-xs text-slate-400 italic">Spectating Mode Active</div>`;
                     } else {
                         controlsHtml = `<div class="mt-3 p-2 bg-slate-50 dark:bg-black/30 rounded-lg text-center text-xs text-slate-400 italic">Controls Hidden</div>`;
-                    }
-
-                    let hostActions = '';
-                    if (this.isHost && this.multiplayerMode && player !== this.currentPlayerName) {
-                        hostActions = `<button onclick="window.gameController.kickPlayer('${player}')" class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 hover:bg-rose-100 p-1 rounded">🚫</button>`;
                     }
 
                     div.innerHTML = `
@@ -1280,7 +1419,7 @@
                                     <h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-tight flex items-center gap-1">
                                         ${player} ${statusIcon}
                                     </h4>
-                                    <div class="flex gap-1">${aiBadge}</div>
+                                    <div class="flex gap-1">${aiBadge} ${specBadge}</div>
                                 </div>
                             </div>
                             <div class="text-right">
@@ -1292,304 +1431,102 @@
                     `;
                     panel.appendChild(div);
                 });
-                
-                if (this.multiplayerMode) {
-                    document.getElementById('playerCountBadge').textContent = `${this.state.players.length} Active`;
-                }
             }
 
-            updateLeaderboard() {
-                const tbody = document.getElementById('leaderboardBody');
-                if(!tbody) return;
-                tbody.innerHTML = '';
-                this.state.players.forEach(p => {
-                    const wins = this.state.roundResults.filter(r => r[2] === p).length;
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td class="p-3 font-medium">${p}</td><td class="p-3 text-center">${wins}</td><td class="p-3 text-right font-mono text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[p] || 0)}</td>`;
-                    tbody.appendChild(row);
-                });
-            }
-            
-            startTournament() {
-                if (this.multiplayerMode && !this.isHost) { alert('Host Only'); return; }
-                this.state.currentRound = 0;
-                this.state.roundResults = [];
-                this.updateStatus('Tournament started');
-                this.renderPlayers();
-                this.nextRound();
+            // --- MISSING METHODS RESTORED BELOW ---
+
+            toggleDarkMode() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', 
+                    document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
             }
 
-            nextRound() {
-                if (this.multiplayerMode && !this.isHost) return;
-                if (this.state.currentRound >= this.state.numRounds) { this.showFinalResults(); return; }
-                this.state.currentRound++;
-                this.state.currentItem = this.ITEMS[(this.state.currentRound - 1) % this.ITEMS.length];
-                const [itemName, basePrice] = this.state.currentItem;
-                this.state.highestBid = basePrice;
-                this.state.highestBidder = null;
-                this.state.lastBidder = null;
-                this.state.perRoundPlayerBids = {};
-                this.state.players.forEach(p => { this.state.perRoundPlayerBids[p] = []; });
-                this.state.roundEndTime = Date.now() + (this.ROUND_DURATION * 1000);
-                this.state.timerRunning = true;
-                this.state.roundStatus = 'active';
-                this.state.minIncrement = Math.max(1, basePrice * this.MIN_INCREMENT_RATIO);
+            showAddAIModal() { 
+                const m = document.getElementById('addAIModal'); 
+                if(!m) return;
+                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
                 
-                document.getElementById('itemName').textContent = itemName;
-                document.getElementById('basePrice').textContent = `₹${basePrice}`;
-                document.getElementById('minIncrement').textContent = `₹${Math.floor(this.state.minIncrement)}`;
-                document.getElementById('highestBid').textContent = `₹${Math.floor(this.state.highestBid)}`;
-                document.getElementById('highestBidderName').textContent = '-';
+                const count = this.state.players.filter(p => p.startsWith('AI_Bot')).length;
+                const nameInput = document.getElementById('newAIName');
+                if(nameInput) nameInput.value = `AI_Bot${count + 1}`;
+            }
+
+            closeAddAIModal() { 
+                const m = document.getElementById('addAIModal'); 
+                if(!m) return;
+                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+            }
+
+            openAIConfig(player) {
+                this.state.currentAIPlayer = player;
+                const m = document.getElementById('aiModal'); 
+                if(!m) return;
+                m.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.add('flex', 'opacity-100', 'pointer-events-auto');
                 
-                this.addLog(`\n--- Round ${this.state.currentRound}/${this.state.numRounds} Started ---`, 'log-round');
-                this.updateLeaderboard();
-                this.renderPlayers();
-                this.startTimer();
-                if (this.multiplayerMode) this.broadcastGameState();
-            }
-            
-            startTimer() {
-                if (this.state.timerInterval) clearInterval(this.state.timerInterval);
-                let lastAnnouncement = 100;
-                this.state.timerInterval = setInterval(() => {
-                    if (!this.state.timerRunning) { clearInterval(this.state.timerInterval); return; }
-                    const now = Date.now();
-                    const diff = Math.ceil((this.state.roundEndTime - now) / 1000);
-                    this.state.roundTimeLeft = diff < 0 ? 0 : diff;
-                    const mins = Math.floor(this.state.roundTimeLeft / 60);
-                    const secs = this.state.roundTimeLeft % 60;
-                    const timerEl = document.getElementById('timer');
-                    if (timerEl) {
-                        timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-                        if (this.state.roundTimeLeft <= 10) timerEl.classList.add('text-rose-500');
-                    }
-                    if (this.state.roundTimeLeft <= 10 && lastAnnouncement > 10) { this.logFairness("🔨 Going ONCE!"); lastAnnouncement = 10; }
-                    if (this.state.roundTimeLeft <= 5 && lastAnnouncement > 5) { this.logFairness("🔨🔨 Going TWICE!"); lastAnnouncement = 5; }
-                    if (this.state.roundTimeLeft <= 0) {
-                        this.state.timerRunning = false;
-                        clearInterval(this.state.timerInterval);
-                        if (!this.multiplayerMode || this.isHost) this.endRound(false);
-                    }
-                }, 1000);
-            }
-            
-            placeBid(player, amount = null, notify = true) {
-                if (!this.state.timerRunning) return;
-                const [_, basePrice] = this.state.currentItem;
-                if (amount === null) {
-                    const input = document.getElementById(`bid-${player}`);
-                    if(!input) return;
-                    amount = parseFloat(input.value);
-                    input.value = '';
-                }
-                const purse = this.state.purses[player] || 0;
-                if (amount > purse) return;
-                if (amount < basePrice) return;
-                if (this.state.highestBidder !== null && amount < this.state.highestBid + this.state.minIncrement) return;
-                
-                this.state.highestBid = amount;
-                this.state.highestBidder = player;
-                this.state.lastBidder = player;
-                this.state.bidHistory.push([this.state.currentRound, player, amount, Date.now()/1000]);
-                
-                if (this.state.roundTimeLeft <= this.ANTI_SNIPING_WINDOW) {
-                    this.state.roundEndTime += (this.ANTI_SNIPING_EXTENSION * 1000);
-                    this.logFairness(`⏱ Sync: Anti-sniping extended round!`);
-                }
-                
-                this.addLog(`${player} bid ₹${Math.floor(amount)}`, 'log-bid');
-                document.getElementById('highestBid').textContent = `₹${Math.floor(this.state.highestBid)}`;
-                document.getElementById('highestBidderName').textContent = this.state.highestBidder;
-                this.updateLeaderboard();
-                this.renderPlayers();
-                if (this.multiplayerMode) this.broadcastBid(player, amount, this.state.roundEndTime);
-            }
-            
-            quickBid(player, type) {
-                if (!this.state.currentItem || !this.state.timerRunning) return;
-                const [_, basePrice] = this.state.currentItem;
-                const purse = this.state.purses[player] || 0;
-                let amount;
-                switch(type) {
-                    case 'min': amount = this.state.highestBid + this.state.minIncrement; break;
-                    case '10': amount = this.state.highestBid + (basePrice * 0.10); break;
-                    case '25': amount = this.state.highestBid + (basePrice * 0.25); break;
-                    case 'max': amount = purse; break;
-                }
-                if (this.state.highestBidder !== null && amount < this.state.highestBid + this.state.minIncrement) amount = this.state.highestBid + this.state.minIncrement;
-                this.placeBid(player, amount, true);
-            }
-            
-            toggleWithdraw(player) {
-                if (this.state.withdrawnPlayers[player]) delete this.state.withdrawnPlayers[player];
-                else this.state.withdrawnPlayers[player] = true;
-                this.renderPlayers();
-            }
-            
-            endRound(isSyncEvent = false) {
-                if (this.multiplayerMode && !this.isHost && !isSyncEvent) return;
-                if (this.state.roundStatus === 'ended') return;
-                this.state.timerRunning = false;
-                clearInterval(this.state.timerInterval);
-                this.state.roundStatus = 'ended';
-                const [itemName] = this.state.currentItem;
-                if (this.state.highestBidder) {
-                    const winner = this.state.highestBidder;
-                    const amount = this.state.highestBid;
-                    if (!this.multiplayerMode || this.isHost) {
-                        this.state.purses[winner] = Math.max(0, this.state.purses[winner] - amount);
-                        if (this.multiplayerMode && this.roomRef) this.roomRef.child('players').child(winner).update({ purse: this.state.purses[winner] });
-                    }
-                    this.state.roundResults.push([this.state.currentRound, itemName, winner, amount]);
-                    this.addLog(`🎉 ${winner} WINS!`, 'log-result');
-                    this.logFairness(`🔥 SOLD to ${winner}!`);
-                    this.triggerWinAnimation(winner);
-                } else {
-                    this.addLog(`🚫 Passed`, 'log-result');
-                }
-                this.updateLeaderboard();
-                this.renderPlayers();
-                this.updateStatus('Round Ended');
-                if (this.multiplayerMode && this.isHost && !isSyncEvent) this.broadcastGameState();
-            }
-            
-            triggerWinAnimation(winnerName) {
-                const logArea = document.getElementById('auctionLog');
-                if(logArea) {
-                    logArea.classList.add('animate-pulse');
-                    setTimeout(() => logArea.classList.remove('animate-pulse'), 500);
-                }
-            }
-            performRoundFairnessAnalysis() {} 
-            predictStrategy() { return { strategy: "Passive" }; }
-            updateStrategyPredictions() {}
-            updateSuggestions() {}
-            aiMakeBid(player) { 
                 const ai = this.state.aiPlayers[player];
-                if (!ai || !ai.active) return;
-                if (!this.state.timerRunning) return;
-                if (this.state.withdrawnPlayers[player]) return;
+                const stratEl = document.getElementById('aiStrategy');
+                const activeEl = document.getElementById('aiActive');
                 
-                const strategy = ai.strategy;
-                const purse = this.state.purses[player] || 0;
-                const [_, basePrice] = this.state.currentItem;
-                const cur = this.state.highestBid;
-                
-                if(Math.random() < 0.2) { 
-                   this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 2000); 
-                   return; 
-                }
-
-                let bid = cur + this.state.minIncrement;
-                if(strategy === 'Aggressive') bid += basePrice * 0.1;
-
-                if (bid > purse) {
-                     this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000); 
-                     return;
-                }
-                this.placeBid(player, bid, false);
-                this.state.aiTimers[player] = setTimeout(() => this.aiMakeBid(player), 3000 + Math.random() * 2000);
+                if(stratEl) stratEl.value = ai ? ai.strategy : 'Incremental';
+                if(activeEl) activeEl.checked = ai ? ai.active : false;
             }
 
-            // CRITICAL: Ensure this is INSIDE the class
-            activateAIForPlayer(p, s) { 
-                this.state.aiPlayers[p] = { strategy: s, active: true }; 
-                this.state.aiTimers[p] = setTimeout(() => this.aiMakeBid(p), 1000);
-                this.logFairness(`✅ AI Activated: ${p}`);
-            }
-            
-            stopAIForPlayer(p) { 
-                delete this.state.aiPlayers[p]; 
-                clearTimeout(this.state.aiTimers[p]);
-                this.logFairness(`❌ AI Stopped: ${p}`);
+            closeAIModal() {
+                const m = document.getElementById('aiModal'); 
+                if(!m) return;
+                m.classList.add('hidden', 'opacity-0', 'pointer-events-none'); 
+                m.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
+                this.state.currentAIPlayer = null;
             }
 
-            showFinalResults() {
-                document.getElementById('victoryModal').classList.remove('hidden');
-                document.getElementById('victoryModal').classList.add('flex');
-            }
-            closeVictoryModal() {
-                document.getElementById('victoryModal').classList.add('hidden');
-                document.getElementById('victoryModal').classList.remove('flex');
-                if(this.multiplayerMode) this.exitToMenu();
-            }
-            kickPlayer(p) { if(this.isHost) this.roomRef.child('players').child(p).remove(); }
-            syncNewRound(gs) { 
-                this.state.currentRound = gs.currentRound;
-            }
-            handleRemoteBid(b) { /* bid logic handled via listener updates mostly */ }
-            broadcastBid(p, a, t) { /* firebase push */ }
-            broadcastGameState() { /* firebase update */ }
-            
-            createAIBot() { 
-                const name = document.getElementById('newAIName').value;
+            createAIBot() {
+                const name = document.getElementById('newAIName').value.trim();
                 const purse = parseFloat(document.getElementById('newAIPurse').value);
+                const strategy = document.getElementById('newAIStrategy').value;
+                const active = document.getElementById('newAIActive').checked;
+                
+                if(!name || isNaN(purse)) {
+                    alert('Invalid Input');
+                    return;
+                }
+                
+                if(this.state.players.includes(name)) {
+                    alert('Name exists');
+                    return;
+                }
+                
                 this.state.players.push(name);
                 this.state.purses[name] = purse;
-                this.activateAIForPlayer(name, "Incremental");
+                
+                if(active) {
+                    this.activateAIForPlayer(name, strategy);
+                }
+                
                 this.renderPlayers();
+                this.updateLeaderboard();
                 this.closeAddAIModal();
             }
 
-            showAddAIModal() { document.getElementById('addAIModal').classList.remove('hidden'); document.getElementById('addAIModal').classList.add('flex'); }
-            closeAddAIModal() { document.getElementById('addAIModal').classList.add('hidden'); document.getElementById('addAIModal').classList.remove('flex'); }
-            openAIConfig() { document.getElementById('aiModal').classList.remove('hidden'); document.getElementById('aiModal').classList.add('flex'); }
-            applyAIConfig() { this.closeAIModal(); }
-            closeAIModal() { document.getElementById('aiModal').classList.add('hidden'); document.getElementById('aiModal').classList.remove('flex'); }
-            
-            toggleDarkMode() {
-                document.documentElement.classList.toggle('dark');
-                localStorage.setItem('darkMode', document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
-            }
-            
-            addLog(msg, type = 'normal') {
-                const log = document.getElementById('auctionLog');
-                if(!log) return;
+            applyAIConfig() {
+                const p = this.state.currentAIPlayer;
+                const s = document.getElementById('aiStrategy').value;
+                const a = document.getElementById('aiActive').checked;
                 
-                if (log.children.length === 1 && log.children[0].textContent.includes('Awaiting')) {
-                    log.innerHTML = '';
-                }
-                
-                const div = document.createElement('div');
-                let classes = "px-3 py-2 rounded-lg text-xs font-mono mb-1 ";
-                
-                if (type === 'log-bid') {
-                    classes += "bg-slate-100 dark:bg-black/30 text-slate-700 dark:text-slate-300 border-l-4 border-gold-400";
-                } else if (type === 'log-round') {
-                    classes += "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-gold-200 font-bold border border-slate-300 dark:border-slate-700 text-center mt-4";
-                } else if (type === 'log-result') {
-                    classes += "bg-gold-50 dark:bg-gold-900/20 text-gold-700 dark:text-gold-300 font-bold border border-gold-200 dark:border-gold-800 animate-fade-in";
+                if(a) {
+                    this.activateAIForPlayer(p, s);
                 } else {
-                    classes += "text-slate-500";
+                    this.stopAIForPlayer(p);
                 }
                 
-                div.className = classes;
-                div.textContent = msg;
-                log.appendChild(div);
-                log.scrollTop = log.scrollHeight;
-            }
-
-            logFairness(msg) {
-                const log = document.getElementById('fairnessLog');
-                if(!log) return;
-                const div = document.createElement('div');
-                div.className = "text-xs py-1 border-b border-slate-700 text-slate-300";
-                div.textContent = msg;
-                log.appendChild(div);
-                log.scrollTop = log.scrollHeight;
-            }
-            
-            clearFairnessLog() { 
-                const log = document.getElementById('fairnessLog');
-                if(log) log.innerHTML = ''; 
-            }
-            
-            updateStatus(msg) { 
-                const el = document.getElementById('statusBar');
-                if(el) el.innerHTML = `<span class="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></span> ${msg}`; 
+                this.closeAIModal();
+                this.renderPlayers();
             }
         }
 
+        // Initialize the game controller
         window.gameController = new GameController();
     </script>
 </body>
