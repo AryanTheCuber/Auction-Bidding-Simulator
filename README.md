@@ -3,7 +3,7 @@
 A real-time, multiplayer auction strategy game where players compete to win valuable items while managing a limited purse. Features advanced AI bots, fairness detection algorithms, and live strategy suggestions.
 
 🎮 Play Now
-(Click here to test the Simulator)[https://aryanthecuber.github.io/Auction-Bidding-Simulator/]
+[Click here to test the Simulator](https://aryanthecuber.github.io/Auction-Bidding-Simulator/)
 
 ✨ Features
 
