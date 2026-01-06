@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auction Bidding Simulator</title>
+    <title>⚡ Ultimate Auction Simulator Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -52,6 +53,7 @@
         }
     </script>
     
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -80,10 +82,25 @@
             background-color: rgba(30, 41, 59, 0.8) !important; /* slate-800 */
             box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
         }
+
+        /* Toast Animation */
+        @keyframes slideDown {
+            from { transform: translateY(-100%) translateX(-50%); opacity: 0; }
+            to { transform: translateY(0) translateX(-50%); opacity: 1; }
+        }
+        .toast-enter { animation: slideDown 0.3s forwards; }
     </style>
 </head>
 <body class="bg-gray-50 text-slate-800 font-sans min-h-screen transition-colors duration-300 dark:bg-dark-950 dark:text-slate-100 overflow-x-hidden">
 
+    <!-- Reconnection Indicator -->
+    <div id="connectionStatus" class="fixed top-0 left-0 w-full h-1 z-[100] transition-colors duration-300 bg-green-500"></div>
+    <div id="reconnectToast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-2 rounded-full shadow-xl z-[100] hidden font-bold text-sm items-center gap-2 toast-enter">
+        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        Connection Lost. Reconnecting...
+    </div>
+
+    <!-- Entry Page -->
     <div id="entryPage" class="min-h-screen relative overflow-hidden bg-black text-white">
         <div class="absolute inset-0 z-0">
             <img src="https://i.pinimg.com/736x/c0/93/45/c09345d986c121ec27cf5fdbadc36acf.jpg" 
@@ -120,7 +137,7 @@
                     </div>
                 </button>
                 
-                
+                <!-- Multiplayer Button -->
                 <button onclick="window.gameController.showInstructions('multi')" 
                         class="group relative overflow-hidden rounded-2xl glass-effect p-8 hover:scale-105 transition-all duration-300 hover:border-gold-500 animate-glow flex flex-col items-center justify-center text-center h-80">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gold-500 opacity-20 rounded-full blur-3xl group-hover:opacity-30 transition-opacity"></div>
@@ -136,7 +153,7 @@
         </div>
     </div>
 
-    
+    <!-- Instructions Buffer Page -->
     <div id="instructionsPage" class="fixed inset-0 z-50 hidden bg-black/95 text-white flex flex-col items-center justify-center p-4">
         <div class="max-w-2xl w-full bg-slate-900 border border-gold-500/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden animate-slide-up">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
@@ -146,7 +163,7 @@
             </h2>
             
             <div id="instructContent" class="space-y-4 text-slate-300 mb-8 text-lg">
-                
+                <!-- Content injected via JS -->
             </div>
 
             <div class="flex justify-end gap-4">
@@ -160,7 +177,7 @@
         </div>
     </div>
 
-    
+    <!-- Multiplayer Login Screen -->
     <div id="loginPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
         <div class="max-w-md w-full bg-slate-900 border border-gold-500/30 rounded-2xl p-10 shadow-2xl relative overflow-hidden text-center">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold-600 via-yellow-400 to-gold-600"></div>
@@ -176,7 +193,7 @@
         </div>
     </div>
 
-    
+    <!-- Multiplayer Lobby -->
     <div id="lobbyPage" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center p-4 animate-fade-in">
         <div class="max-w-4xl w-full">
             <h2 class="text-4xl font-bold text-center text-gold-400 mb-10 flex justify-center items-center gap-3">
@@ -184,7 +201,7 @@
             </h2>
             
             <div class="grid md:grid-cols-2 gap-8">
-                
+                <!-- Create Room Card -->
                 <div class="bg-slate-900 border border-slate-700 hover:border-gold-500/50 rounded-2xl p-8 transition-all hover:transform hover:-translate-y-1 shadow-2xl relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gold-500 opacity-5 rounded-full blur-3xl group-hover:opacity-10 transition-opacity"></div>
                     <div class="text-4xl mb-4">👑</div>
@@ -195,7 +212,7 @@
                     </button>
                 </div>
 
-                
+                <!-- Join Room Card -->
                 <div class="bg-slate-900 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-8 transition-all hover:transform hover:-translate-y-1 shadow-2xl relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-5 rounded-full blur-3xl group-hover:opacity-10 transition-opacity"></div>
                     <div class="text-4xl mb-4">🎟️</div>
@@ -218,7 +235,7 @@
         </div>
     </div>
 
-    
+    <!-- Host Setup Modal -->
     <div id="hostSetupModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-md p-4 overflow-y-auto">
         <div class="bg-slate-900 border-2 border-gold-500/50 rounded-2xl p-8 w-full max-w-lg relative shadow-2xl my-auto">
             <div class="absolute -top-4 -left-4 bg-gold-500 text-black font-bold px-4 py-1 rounded-lg shadow-lg">HOST CONFIG</div>
@@ -226,13 +243,13 @@
             <h2 class="text-3xl font-bold text-white mb-4">Setup Tournament</h2>
             
             <div class="space-y-4">
-                
+                <!-- Host Name -->
                 <div>
                     <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Name</label>
                     <input type="text" id="hostNameInput" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none" placeholder="Enter your name">
                 </div>
 
-                
+                <!-- Host Participation -->
                 <div>
                     <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Role</label>
                     <div class="flex items-center justify-between bg-black/30 p-3 rounded-xl border border-slate-700">
@@ -247,19 +264,19 @@
                     </div>
                 </div>
 
-                
+                <!-- Host Purse Input -->
                 <div id="hostPurseContainer">
                     <label class="block text-slate-400 text-xs font-bold uppercase mb-2">Host Purse (₹)</label>
                     <input type="number" id="hostPurseInput" value="50000" min="1000" class="w-full bg-black/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-gold-500 focus:outline-none">
                 </div>
 
-                
+                <!-- Setup Tabs -->
                 <div class="flex border-b border-slate-700 mb-4">
                     <button id="tabPreset" onclick="window.gameController.switchSetupTab('preset')" class="flex-1 py-2 text-sm font-bold text-gold-500 border-b-2 border-gold-500 transition-colors">Choose Category</button>
                     <button id="tabCustom" onclick="window.gameController.switchSetupTab('custom')" class="flex-1 py-2 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-white transition-colors">Custom Item</button>
                 </div>
 
-                
+                <!-- Tab: Presets -->
                 <div id="contentPreset" class="block">
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <button onclick="window.gameController.selectCategory('Real Estate', this)" class="cat-btn p-3 border border-slate-600 rounded-xl text-left hover:border-gold-500 hover:bg-slate-800 transition-all active-cat">
@@ -293,7 +310,7 @@
                     </div>
                 </div>
 
-                
+                <!-- Tab: Custom -->
                 <div id="contentCustom" class="hidden space-y-3">
                     <div>
                         <label class="block text-slate-400 text-xs font-bold uppercase mb-1">Item Name</label>
@@ -329,7 +346,7 @@
         </div>
     </div>
 
-   
+    <!-- Main Game App -->
     <div id="mainApp" class="hidden">
         <header class="bg-gradient-to-r from-gray-900 via-slate-900 to-black text-white shadow-2xl relative overflow-hidden border-b border-gold-600/30">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
@@ -341,14 +358,14 @@
                         <div class="flex items-center gap-4">
                             <button onclick="window.gameController.exitToMenu()" class="text-xs uppercase font-bold text-slate-500 hover:text-gold-400 transition-colors">← Menu</button>
                             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight drop-shadow-lg">
-                                🏆 Auction Bidding <span class="text-gold-400">Simulator</span>
+                                🏆 Ultimate <span class="text-gold-400">Auction</span>
                             </h1>
                         </div>
-                        <p class="text-slate-400 mt-1 font-medium text-sm uppercase tracking-widest pl-14">Modern Bidding Engine</p>
+                        <p class="text-slate-400 mt-1 font-medium text-sm uppercase tracking-widest pl-14">Premium Bidding Engine</p>
                     </div>
                     
                     <div class="flex flex-col gap-3 w-full lg:w-auto">
-                        
+                        <!-- Single Player Setup Controls -->
                         <div id="singlePlayerControls" class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-gold-500/20 flex flex-col md:flex-row gap-3 items-end shadow-lg hidden">
                             <div class="flex flex-col gap-1 w-full md:w-auto">
                                 <label class="text-[10px] uppercase font-bold text-gold-400">Your Name</label>
@@ -376,7 +393,7 @@
                             </button>
                         </div>
 
-                        
+                        <!-- Multiplayer Controls -->
                         <div id="multiplayerStatus" class="w-full hidden">
                             <div class="flex flex-col gap-2 items-center md:items-end">
                                 <div id="multiplayerRoomInfo" class="hidden"></div>
@@ -387,6 +404,9 @@
                                 </div>
                                 <button id="multiplayerStartBtn" onclick="window.gameController.startTournament()" disabled class="hidden w-full px-6 py-2 bg-gray-500 cursor-not-allowed text-black font-bold rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
                                     <span>⏳</span> Waiting for Players...
+                                </button>
+                                <button onclick="window.gameController.showAnalytics()" class="bg-blue-900/30 text-blue-400 px-3 py-2 rounded-lg text-sm font-bold border border-blue-500/30 hover:bg-blue-900/50 transition">
+                                    📊 Stats
                                 </button>
                             </div>
                         </div>
@@ -469,7 +489,7 @@
                             <span class="text-xs text-slate-400 font-mono">SECURE FEED</span>
                         </div>
                         
-                        <div id="auctionLog" class="flex-1 p-4 overflow-y-auto font-mono text-sm space-y-2 custom-scrollbar bg-slate-50 dark:bg-black/50">
+                        <div id="auctionLog" class="flex-1 p-4 overflow-y-auto font-mono text-sm space-y-2 custom-scrollbar bg-slate-50 dark:bg-black/50 flex flex-col-reverse">
                             <div class="text-center text-slate-400 py-8">Awaiting auction start...</div>
                         </div>
 
@@ -554,70 +574,70 @@
         </div>
     </div>
 
-   
+    <!-- Victory Modal -->
     <div id="victoryModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/90 backdrop-blur-md transition-opacity opacity-0 pointer-events-none">
-        <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative flex flex-col max-h-[90vh]">
-            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent pointer-events-none"></div>
-            
-            
-            <div class="p-8 text-center relative z-10 shrink-0">
+        <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-lg mx-4 border-4 border-gold-500 overflow-hidden transform scale-95 transition-transform duration-500 relative">
+            <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gold-500/20 to-transparent"></div>
+            <div class="p-8 text-center relative z-10">
                 <div class="text-6xl mb-4 animate-bounce">🏆</div>
                 <h2 class="text-4xl font-black text-gold-500 mb-2">WINNER!</h2>
-                <h3 id="winnerName" class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Player Name</h3>
-            </div>
-
-            
-            <div class="flex-1 overflow-y-auto px-8 custom-scrollbar">
+                <h3 id="winnerName" class="text-3xl font-bold text-slate-800 dark:text-white mb-6">Player Name</h3>
                 
-                <div class="bg-slate-50 dark:bg-black/40 rounded-xl p-4 mb-6 border border-slate-200 dark:border-slate-800 shrink-0">
+                <div class="bg-slate-50 dark:bg-black/40 rounded-xl p-4 mb-6 border border-slate-200 dark:border-slate-800">
                     <div class="grid grid-cols-3 gap-4 text-sm">
-                        <div class="text-center">
+                        <div>
                             <span class="block text-slate-400 text-xs font-bold uppercase">Wins</span>
                             <span id="winnerWins" class="text-xl font-bold text-slate-800 dark:text-white">0</span>
                         </div>
-                        <div class="text-center">
+                        <div>
                             <span class="block text-slate-400 text-xs font-bold uppercase">Purse Left</span>
                             <span id="winnerPurse" class="text-xl font-bold text-emerald-500">₹0</span>
                         </div>
-                        <div class="text-center">
+                        <div>
                             <span class="block text-slate-400 text-xs font-bold uppercase">Efficiency</span>
                             <span class="text-xl font-bold text-gold-500">S+</span>
                         </div>
                     </div>
                 </div>
 
-                
-                <h4 class="text-lg font-bold text-slate-700 dark:text-gold-400 mb-3 uppercase tracking-wider text-center">Match History</h4>
-                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase">
-                            <tr>
-                                <th class="p-3">Rnd</th>
-                                <th class="p-3">Item</th>
-                                <th class="p-3">Winner</th>
-                                <th class="p-3 text-right">Price</th>
-                            </tr>
-                        </thead>
-                        <tbody id="roundHistoryBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300 bg-white dark:bg-black/20">
-                            
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            
-            <div class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-black/20 shrink-0 flex gap-4">
-                <button onclick="window.gameController.closeVictoryModal(false)" class="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                    Close & Review
-                </button>
-                <button onclick="window.gameController.closeVictoryModal(true)" class="flex-1 px-4 py-3 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
-                    Exit to Lobby
+                <button onclick="window.gameController.closeVictoryModal()" class="w-full px-6 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
+                    Continue to Lobby
                 </button>
             </div>
         </div>
     </div>
 
-    
+    <!-- Analytics Modal (New Feature) -->
+    <div id="analyticsModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fade-in">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl transform transition-all">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white">📊 Performance Analytics</h2>
+                <button onclick="window.gameController.closeAnalytics()" class="text-slate-400 hover:text-white">✕</button>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-800 p-4 rounded-xl text-center">
+                    <div class="text-slate-400 text-xs uppercase font-bold mb-1">Total Spent</div>
+                    <div id="statSpent" class="text-2xl font-mono text-gold-500">₹0</div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl text-center">
+                    <div class="text-slate-400 text-xs uppercase font-bold mb-1">Items Won</div>
+                    <div id="statWon" class="text-2xl font-bold text-white">0</div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl text-center">
+                    <div class="text-slate-400 text-xs uppercase font-bold mb-1">Bid Efficiency</div>
+                    <div id="statEfficiency" class="text-2xl font-bold text-emerald-400">0%</div>
+                </div>
+            </div>
+            <div class="px-6 pb-6">
+                <h3 class="text-white font-bold mb-3">Bid History</h3>
+                <div class="bg-black/50 rounded-xl h-48 overflow-y-auto p-2 custom-scrollbar" id="analyticsHistory">
+                    <!-- History rows will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Config Modal -->
     <div id="aiModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none">
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform scale-95 transition-transform duration-300 border border-slate-200 dark:border-gold-500/30 overflow-hidden">
             <div class="p-6">
@@ -648,7 +668,7 @@
         </div>
     </div>
 
-    
+    <!-- Add AI Bot Modal (SP) -->
     <div id="addAIModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none">
         <div class="bg-white dark:bg-dark-900 rounded-2xl shadow-2xl w-full max-w-md mx-4 transform scale-95 transition-transform duration-300 border border-slate-200 dark:border-gold-500/30 overflow-hidden">
             <div class="p-6">
@@ -695,12 +715,12 @@
             constructor() {
                 this.MAX_PLAYERS = 10;
                 this.MAX_ROUNDS = 10;
-                this.ROUND_DURATION = 60;
+                this.ROUND_DURATION = 60; // Default
                 this.ANTI_SNIPING_WINDOW = 5;
                 this.ANTI_SNIPING_EXTENSION = 10;
                 this.ANTI_SPAM_SECONDS = 2;
                 this.UNUSUAL_MULTIPLIER = 3;
-                this.MIN_INCREMENT_RATIO = 0.02; 
+                this.MIN_INCREMENT_RATIO = 0.05; // 5%
 
                 this.CATEGORY_SETS = {
                     'Real Estate': [
@@ -737,9 +757,10 @@
                     currentItem: null, highestBid: 0, highestBidder: null, lastBidder: null,
                     bidHistory: [], perRoundPlayerBids: {}, perPlayerLastBidTime: {}, suspiciousBids: [],
                     roundResults: [], timerRunning: false, roundTimeLeft: 0, roundEndTime: 0,
-                    timerInterval: null, aiPlayers: {}, aiTimers: {}, minIncrement: 0,
+                    aiPlayers: {}, aiTimers: {}, minIncrement: 0,
                     currentAIPlayer: null, withdrawnPlayers: {}, roundStatus: 'waiting',
-                    bidCounts: {}
+                    bidCounts: {},
+                    history: [] // Feature 4: Bid History
                 };
 
                 this.currentRoom = null;
@@ -754,7 +775,12 @@
                 this.database = null;
                 this.auth = null;
                 this.selectedPendingMode = null;
-                this.setupTab = 'preset';
+                this.setupTab = 'preset'; 
+
+                // Optimizations
+                this.timerFrameId = null;
+                this.lastRenderedTime = -1;
+                this.processingRoundEnd = false; // Bug Fix
 
                 this.initializeFirebase();
                 this.initializeDarkMode();
@@ -786,26 +812,21 @@
                     
                     this.auth = firebase.auth();
                     this.database = firebase.database();
+                    this.setupConnectionMonitoring(); // Feature 3
 
                     this.auth.onAuthStateChanged((user) => {
-                        
                         if (user && !user.isAnonymous) {
                             console.log("✅ Auth Ready (Google):", user.uid);
                             this.firebaseInitialized = true;
-                            
-                            
                             if (this.inMultiplayerFlow) {
                                 this.showLobby();
                             }
                         } else {
-                            
                             if (user && user.isAnonymous) {
                                 console.log("Cleaning up anonymous session to force Google Login...");
                                 this.auth.signOut();
                                 return;
                             }
-
-                            
                             const authSec = document.getElementById('googleAuthSection');
                             const multiBtns = document.getElementById('multiplayerButtons');
                             if(authSec && multiBtns) {
@@ -844,6 +865,27 @@
                 });
             }
 
+            // Feature 3: Reconnection Handling
+            setupConnectionMonitoring() {
+                if (!this.database) return;
+                const connectedRef = this.database.ref(".info/connected");
+                connectedRef.on("value", (snap) => {
+                    const el = document.getElementById('connectionStatus');
+                    const toast = document.getElementById('reconnectToast');
+                    if (snap.val() === true) {
+                        el.classList.replace('bg-red-500', 'bg-green-500');
+                        toast.classList.add('hidden');
+                        if (this.roomRef && this.currentPlayerName) {
+                             this.roomRef.child(`players/${this.currentPlayerName}/online`).set(true);
+                        }
+                    } else {
+                        el.classList.replace('bg-green-500', 'bg-red-500');
+                        toast.classList.remove('hidden');
+                    }
+                });
+            }
+
+            // ... (Previous UI handlers: showInstructions, hideInstructions, confirmInstructions, startSinglePlayerSetup, startSinglePlayerGame, checkLoginAndShowLobby, showLogin, showLobby, transitionToMainApp, exitToMenu, generateRoomCode) ...
             
             showInstructions(mode) {
                 this.selectedPendingMode = mode;
@@ -885,7 +927,6 @@
                 modal.classList.remove('flex');
             }
 
-            
             confirmInstructions() {
                 this.hideInstructions();
                 const mode = this.selectedPendingMode;
@@ -899,7 +940,6 @@
                 }
             }
 
-            
             startSinglePlayerSetup() {
                 const entryPage = document.getElementById('entryPage');
                 const mainApp = document.getElementById('mainApp');
@@ -918,7 +958,6 @@
                 badge.classList.add('hidden');
             }
 
-           
             startSinglePlayerGame() {
                 const nameInput = document.getElementById('spNameInput').value.trim();
                 const purseInput = parseFloat(document.getElementById('spPurseInput').value);
@@ -930,7 +969,6 @@
                 this.currentPlayerName = nameInput;
                 const botName = "Bot_" + botType;
 
-                
                 this.state.players = [nameInput, botName];
                 this.state.purses = {
                     [nameInput]: purseInput,
@@ -938,7 +976,7 @@
                 };
                 
                 this.state.aiPlayers = {};
-                this.activateAIForPlayer(botName, botType); 
+                this.activateAIForPlayer(botName, botType);
 
                 this.state.numRounds = 5;
                 this.state.currentRound = 0;
@@ -949,7 +987,6 @@
                 this.state.perPlayerLastBidTime = {};
                 this.state.bidCounts = {}; 
 
-                
                 document.getElementById('singlePlayerControls').innerHTML = `
                     <div class="flex items-center gap-4 text-sm font-bold text-gold-400">
                         <span>⚔️ DUEL MODE</span>
@@ -962,7 +999,6 @@
                 this.nextRound();
             }
 
-           
             checkLoginAndShowLobby() {
                 const user = this.auth ? this.auth.currentUser : null;
                 const isLoggedIn = user && !user.isAnonymous;
@@ -983,9 +1019,7 @@
             showLobby() {
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('loginPage').classList.remove('flex');
-                
-                document.getElementById('entryPage').classList.add('hidden'); // Ensure entry is gone
-                
+                document.getElementById('entryPage').classList.add('hidden'); 
                 document.getElementById('lobbyPage').classList.remove('hidden');
                 document.getElementById('lobbyPage').classList.add('flex');
             }
@@ -1008,7 +1042,6 @@
                 multiControls.classList.remove('hidden');
                 badge.classList.remove('hidden');
                 
-                
                 if (this.isHost) {
                     document.getElementById('multiplayerStartBtn').classList.remove('hidden');
                     document.getElementById('readyCheckArea').classList.add('hidden');
@@ -1029,8 +1062,8 @@
                 return 'ROOM-' + Math.random().toString(36).substr(2, 6).toUpperCase();
             }
 
+            // ... (Host Setup and Join Logic) ...
             
-
             openHostSetup() {
                 if (!this.firebaseInitialized) { alert('Waiting for connection...'); return; }
                 const user = this.auth.currentUser;
@@ -1039,9 +1072,7 @@
                 document.getElementById('hostNameInput').value = user.displayName || 'Host';
                 document.getElementById('hostSetupModal').classList.remove('hidden');
                 document.getElementById('hostSetupModal').classList.add('flex');
-                this.switchSetupTab('preset'); 
-                
-                
+                this.switchSetupTab('preset');
                 this.toggleHostPurseInput();
             }
 
@@ -1098,7 +1129,7 @@
                 
                 if (!playerName) { alert("Enter a name"); return; }
                 
-                let hostPurse = 50000; // Default
+                let hostPurse = 50000;
                 if (participate) {
                     hostPurse = parseFloat(document.getElementById('hostPurseInput').value);
                     if (isNaN(hostPurse) || hostPurse <= 0) {
@@ -1107,7 +1138,6 @@
                     }
                 }
 
-                
                 let rounds, time, category, customItem = null;
 
                 if (this.setupTab === 'preset') {
@@ -1116,7 +1146,6 @@
                     time = parseInt(document.getElementById('setupTime').value);
                     this.ITEMS = this.CATEGORY_SETS[category] || this.CATEGORY_SETS['Real Estate'];
                 } else {
-                   
                     category = 'Custom';
                     const cName = document.getElementById('customItemName').value.trim() || "Custom Item";
                     const cPrice = parseInt(document.getElementById('customBasePrice').value) || 1000;
@@ -1124,16 +1153,15 @@
                     const cTime = parseInt(document.getElementById('customDuration').value) || 60;
                     const cDesc = document.getElementById('customDesc').value.trim();
                     
-                    rounds = 1; 
+                    rounds = 1;
                     time = cTime;
                     
                     customItem = {
                         name: cName,
                         price: cPrice,
-                        increment: cInc, 
+                        increment: cInc,
                         desc: cDesc
                     };
-                    
                     
                     this.ITEMS = [[cName, cPrice]];
                 }
@@ -1145,7 +1173,7 @@
                 this.multiplayerMode = true;
                 this.ROUND_DURATION = time;
                 this.state.numRounds = rounds;
-                this.isReady = true; 
+                this.isReady = true;
 
                 this.roomRef = this.database.ref('rooms/' + this.currentRoom);
                 
@@ -1157,7 +1185,7 @@
                     joinedAt: Date.now(),
                     isSpectator: !participate,
                     isHost: true,
-                    isReady: true 
+                    isReady: true
                 };
 
                 this.roomRef.set({
@@ -1169,7 +1197,7 @@
                         numRounds: rounds,
                         roundTime: time,
                         category: category,
-                        customItem: customItem, 
+                        customItem: customItem,
                         roundStatus: 'waiting'
                     },
                     createdAt: Date.now()
@@ -1183,7 +1211,6 @@
             }
 
             joinRoom() {
-                
                 if (!this.firebaseInitialized) { alert('Waiting for connection...'); return; }
                 const user = this.auth.currentUser;
                 if (!user || user.isAnonymous) { alert('Please sign in with Google first'); return; }
@@ -1214,7 +1241,6 @@
                         alert('Room not found!');
                         return;
                     }
-                    
                     const gs = snapshot.val().gameState;
                     if (gs.category === 'Custom' && gs.customItem) {
                         this.ITEMS = [[gs.customItem.name, gs.customItem.price]];
@@ -1241,7 +1267,6 @@
                 });
             }
 
-            
             toggleReady() {
                 if (!this.multiplayerMode || this.isHost) return;
                 
@@ -1283,12 +1308,10 @@
                         onlinePlayers.forEach(p => {
                             this.state.purses[p.name] = p.purse || 0;
                         });
-                        this.renderPlayers(playersData); 
+                        this.renderPlayers(playersData);
                         this.updateLeaderboard();
                         
-                        
                         if (this.isHost) {
-                            
                             const activePlayers = onlinePlayers.filter(p => !p.isSpectator);
                             const allReady = activePlayers.every(p => p.isReady);
                             const startBtn = document.getElementById('multiplayerStartBtn');
@@ -1312,10 +1335,8 @@
                     const gameState = snapshot.val();
                     if (!gameState) return;
 
-                    
                     if (gameState.customItem) {
                         this.ITEMS = [[gameState.customItem.name, gameState.customItem.price]];
-                       
                         const descEl = document.getElementById('itemDesc');
                         if (descEl) descEl.textContent = gameState.customItem.desc || "";
                     } else if (gameState.category && this.CATEGORY_SETS[gameState.category]) {
@@ -1327,21 +1348,25 @@
                         this.syncNewRound(gameState);
                     } else if (gameState.started && !this.state.timerRunning && gameState.timerRunning) {
                         this.state.currentItem = gameState.currentItem;
-                        
                         if (this.state.currentItem) {
                             this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                             this.updateItemUI();
                         }
                         this.state.roundEndTime = gameState.roundEndTime;
                         this.state.timerRunning = true;
-                        this.startTimer();
+                        this.startTimerLoop(); // Feature 7: rAF Timer
                     } else if (gameState.roundStatus === 'ended' && this.state.roundStatus !== 'ended') {
                         this.state.highestBidder = gameState.highestBidder;
                         this.state.highestBid = gameState.highestBid;
                         this.endRound(true);
                     } else if (gameState.timerRunning && this.state.timerRunning) {
-                        
-                        this.state.roundEndTime = gameState.roundEndTime;
+                         // Feature 8: Timer sync correction
+                         const now = Date.now();
+                         const serverRemaining = Math.ceil((gameState.roundEndTime - now) / 1000);
+                         if (Math.abs(serverRemaining - this.state.roundTimeLeft) > 2) {
+                            this.state.roundTimeLeft = serverRemaining > 0 ? serverRemaining : 0;
+                            this.updateStatus("⏱ Timer Synced!");
+                         }
                     }
                 });
 
@@ -1357,7 +1382,8 @@
                 const panel = document.getElementById('playersPanel');
                 if (this.state.players.length > 0) panel.innerHTML = '';
 
-                this.state.players.forEach(player => {
+                // Feature 7: Optimize DOM batching
+                const playersHTML = this.state.players.map(player => {
                     const isWithdrawn = this.state.withdrawnPlayers[player];
                     const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : true;
                     const isWinning = player === this.state.highestBidder;
@@ -1375,7 +1401,6 @@
                          isSpectator = true; 
                     }
                     
-                    
                     let statusIcon = '';
                     if (this.multiplayerMode) {
                         if (isHost) statusIcon = '👑';
@@ -1383,13 +1408,6 @@
                         else statusIcon = '⏳';
                     }
 
-                    const div = document.createElement('div');
-                    div.className = `relative p-4 rounded-xl border-2 transition-all duration-300 ${
-                        isWinning 
-                        ? 'bg-gold-50 border-gold-400 shadow-lg scale-[1.02] dark:bg-gold-900/20 dark:border-gold-500' 
-                        : 'bg-white border-slate-100 hover:border-gold-200 hover:shadow-md dark:bg-dark-800 dark:border-slate-800 dark:hover:border-gold-700'
-                    } ${isWithdrawn ? 'opacity-50 grayscale' : ''}`;
-                    
                     const winningBadge = isWinning ? 
                         `<span class="absolute -top-3 -right-2 bg-gradient-to-r from-gold-500 to-yellow-600 text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-sm animate-bounce">LEADING</span>` : '';
                     
@@ -1398,7 +1416,6 @@
                     
                     const specBadge = isSpectator ? `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md dark:bg-blue-900/40 dark:text-blue-300">SPECTATOR</span>` : '';
 
-                  
                     let hostActions = '';
                     if (this.isHost && this.multiplayerMode && player !== this.currentPlayerName) {
                         hostActions = `
@@ -1443,30 +1460,37 @@
                         controlsHtml = `<div class="mt-3 p-2 bg-slate-50 dark:bg-black/30 rounded-lg text-center text-xs text-slate-400 italic">Controls Hidden</div>`;
                     }
 
-                    div.innerHTML = `
-                        ${winningBadge}
-                        ${hostActions}
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-black flex items-center justify-center text-gold-400 font-bold text-xs shadow-sm ring-1 ring-gold-500/20">
-                                    ${player.charAt(0).toUpperCase()}
+                    return `
+                        <div class="relative p-4 rounded-xl border-2 transition-all duration-300 ${
+                            isWinning 
+                            ? 'bg-gold-50 border-gold-400 shadow-lg scale-[1.02] dark:bg-gold-900/20 dark:border-gold-500' 
+                            : 'bg-white border-slate-100 hover:border-gold-200 hover:shadow-md dark:bg-dark-800 dark:border-slate-800 dark:hover:border-gold-700'
+                        } ${isWithdrawn ? 'opacity-50 grayscale' : ''}">
+                            ${winningBadge}
+                            ${hostActions}
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-700 to-black flex items-center justify-center text-gold-400 font-bold text-xs shadow-sm ring-1 ring-gold-500/20">
+                                        ${player.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-tight flex items-center gap-1">
+                                            ${player} ${statusIcon}
+                                        </h4>
+                                        <div class="flex gap-1">${aiBadge} ${specBadge}</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm leading-tight flex items-center gap-1">
-                                        ${player} ${statusIcon}
-                                    </h4>
-                                    <div class="flex gap-1">${aiBadge} ${specBadge}</div>
+                                <div class="text-right">
+                                    <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Purse</span>
+                                    <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[player] || 0).toLocaleString()}</span>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <span class="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Purse</span>
-                                <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">₹${Math.floor(this.state.purses[player] || 0)}</span>
-                            </div>
+                            ${controlsHtml}
                         </div>
-                        ${controlsHtml}
                     `;
-                    panel.appendChild(div);
-                });
+                }).join('');
+                
+                panel.innerHTML = playersHTML;
             }
 
             toggleDarkMode() {
@@ -1559,14 +1583,12 @@
                 this.renderPlayers();
             }
 
-           
-
             activateAIForPlayer(name, strategy) {
                 this.state.aiPlayers[name] = { active: true, strategy: strategy };
                 
                 if (this.state.aiTimers[name]) clearInterval(this.state.aiTimers[name]);
                 
-                
+                // AI Decision Interval (2s)
                 this.state.aiTimers[name] = setInterval(() => {
                     this.aiLogic(name);
                 }, 2000);
@@ -1580,7 +1602,7 @@
             aiLogic(botName) {
                 if (!this.state.timerRunning || this.state.roundStatus !== 'active') return;
                 
-                
+                // Don't bid if I'm already winning
                 if (this.state.highestBidder === botName) return;
 
                 const ai = this.state.aiPlayers[botName];
@@ -1588,52 +1610,53 @@
                 const currentBid = this.state.highestBid;
                 const minBid = currentBid + this.state.minIncrement;
 
-                if (myPurse < minBid) return; 
+                if (myPurse < minBid) return; // Broke
 
                 let shouldBid = false;
                 let bidAmount = minBid;
 
-                
+                // Logic based on strategy
                 const timeLeft = this.state.roundTimeLeft;
                 const randomChance = Math.random();
 
                 switch (ai.strategy) {
                     case 'Aggressive':
-                        
+                        // Bids immediately if losing, jumps by 2x increment sometimes
                         if (randomChance > 0.3) {
                             shouldBid = true;
                             if (randomChance > 0.8) bidAmount += this.state.minIncrement; 
                         }
                         break;
                     case 'Conservative':
-                        
+                        // Only bids if price is low compared to purse
                         if (minBid < myPurse * 0.5 && randomChance > 0.6) shouldBid = true;
                         break;
                     case 'Sniper':
-                        
+                        // Only bids in last 5 seconds
                         if (timeLeft <= 5 && randomChance > 0.1) shouldBid = true;
                         break;
                     case 'Rapid':
-                        
+                        // High frequency bidding
                         if (randomChance > 0.2) shouldBid = true;
                         break;
-                    default: 
+                    default: // Incremental/Standard
                         if (randomChance > 0.5) shouldBid = true;
                         break;
                 }
 
                 if (shouldBid) {
-                    this.placeBid(botName, bidAmount, true); 
+                    this.placeBid(botName, bidAmount, true); // True flag for AI to skip alerts
                 }
             }
 
             syncNewRound(gameState) {
                 this.state.currentRound = gameState.currentRound;
-                this.state.currentItem = gameState.currentItem; 
+                this.state.currentItem = gameState.currentItem; // [name, price]
                 this.state.highestBid = gameState.highestBid;
                 this.state.highestBidder = gameState.highestBidder;
                 this.state.roundStatus = gameState.roundStatus;
                 
+                // Recalculate min increment based on base price (item price) - 2% logic
                 if (this.state.currentItem) {
                     this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                 }
@@ -1651,14 +1674,59 @@
                 this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem ? this.state.currentItem[0] : 'Unknown'}`);
 
                 if (gameState.timerRunning) {
-                    
-                    this.state.roundEndTime = gameState.roundEndTime; 
-                    this.state.roundTimeLeft = this.ROUND_DURATION; 
-                    this.startTimer();
+                    // Sync timer
+                    const now = Date.now();
+                    const remaining = Math.ceil((gameState.roundEndTime - now) / 1000);
+                    this.state.roundEndTime = gameState.roundEndTime; // Sync end time
+                    this.state.roundTimeLeft = remaining > 0 ? remaining : 0;
+                    this.startTimerLoop(); // Feature 7
                 }
                 
                 this.renderPlayers();
-                this.updateAIAnalysis(); 
+                this.updateAIAnalysis();
+            }
+            
+            // Feature 7: Timer Optimization (requestAnimationFrame)
+            startTimerLoop() {
+                if (this.timerFrameId) cancelAnimationFrame(this.timerFrameId);
+                this.state.timerRunning = true;
+                
+                const update = () => {
+                    if (!this.state.timerRunning) return;
+                    
+                    const now = Date.now();
+                    const diff = this.state.roundEndTime - now;
+                    const secondsLeft = Math.max(0, Math.ceil(diff / 1000));
+                    this.state.roundTimeLeft = secondsLeft;
+                    
+                    // Feature 7: Debounce UI Updates
+                    if (secondsLeft !== this.lastRenderedTime) {
+                        this.lastRenderedTime = secondsLeft;
+                        this.updateTimerUI(secondsLeft);
+                        
+                        if (secondsLeft <= 0) {
+                           this.endRound();
+                           return; // Stop loop
+                        }
+                    }
+                    this.timerFrameId = requestAnimationFrame(update);
+                };
+                this.timerFrameId = requestAnimationFrame(update);
+            }
+            
+            updateTimerUI(seconds) {
+                const timerEl = document.getElementById('timer');
+                if (!timerEl) return;
+                
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                timerEl.innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                
+                if (seconds <= 5) {
+                    timerEl.classList.add('text-red-500', 'animate-pulse');
+                } else {
+                    timerEl.classList.remove('text-red-500', 'animate-pulse');
+                }
             }
 
             updateItemUI() {
@@ -1676,87 +1744,6 @@
                 if (nameEl) nameEl.innerText = this.state.currentItem[0];
             }
 
-            updateAIAnalysis() {
-                const analysisPanel = document.getElementById('strategyPanel');
-                const tipsPanel = document.getElementById('suggestionsPanel');
-                
-                if (!analysisPanel || !tipsPanel) return;
-
-                
-                let maxBids = 0;
-                let aggressivePlayer = 'None';
-                
-                Object.entries(this.state.bidCounts).forEach(([player, count]) => {
-                    if (count > maxBids) {
-                        maxBids = count;
-                        aggressivePlayer = player;
-                    }
-                });
-
-                let analysisHtml = `
-                    <div class="mb-2">
-                        <span class="block text-slate-400 uppercase text-[10px] font-bold">Most Aggressive</span>
-                        <span class="text-rose-500 font-bold">${aggressivePlayer} (${maxBids} bids)</span>
-                    </div>
-                `;
-
-                
-                let maxSpent = 0;
-                let bigSpender = 'None';
-               
-                Object.keys(this.state.purses).forEach(p => {
-                    
-                    let spent = this.state.roundResults
-                        .filter(r => r.winner === p)
-                        .reduce((sum, r) => sum + r.price, 0);
-                    if (spent > maxSpent) {
-                        maxSpent = spent;
-                        bigSpender = p;
-                    }
-                });
-
-                if (maxSpent > 0) {
-                    analysisHtml += `
-                        <div>
-                            <span class="block text-slate-400 uppercase text-[10px] font-bold">Big Spender</span>
-                            <span class="text-gold-500 font-bold">${bigSpender} (₹${maxSpent.toLocaleString()})</span>
-                        </div>
-                    `;
-                } else {
-                    analysisHtml += `<div class="text-xs text-slate-500 italic">No spending yet.</div>`;
-                }
-
-                analysisPanel.innerHTML = analysisHtml;
-
-                
-                if (!this.currentPlayerName) return;
-
-                const myPurse = this.state.purses[this.currentPlayerName] || 0;
-                const myWins = this.state.roundResults.filter(r => r.winner === this.currentPlayerName).length;
-                let tip = "";
-                let tipColor = "text-slate-600 dark:text-slate-300";
-
-                if (myPurse < 5000) {
-                    tip = "⚠️ CRITICAL: Low Funds! Do not bid early. Wait for opponents to exhaust their budgets on expensive items, then snipe cheap ones.";
-                    tipColor = "text-rose-500 font-bold";
-                } else if (myWins === 0 && this.state.currentRound > 2) {
-                    tip = "💡 You are falling behind. Opponents are securing assets. Try opening with a strong bid (+25%) to intimidate bots.";
-                    tipColor = "text-gold-600 dark:text-gold-400";
-                } else if (this.state.roundStatus === 'active' && this.state.highestBid > myPurse) {
-                    tip = "🚫 Too expensive. You cannot afford this. Let it go.";
-                    tipColor = "text-rose-500";
-                } else if (this.state.roundStatus === 'active' && this.state.highestBid > myPurse * 0.6) {
-                     tip = "⚠️ Caution: This item would cost >60% of your remaining funds. Only bid if you really need it.";
-                } else if (this.state.highestBidder === this.currentPlayerName) {
-                    tip = "✅ You are winning. Hold your position. Watch out for last-second snipers.";
-                    tipColor = "text-emerald-500 font-bold";
-                } else {
-                    tip = "ℹ️ Look for value. Bid when the price is low relative to the item's worth.";
-                }
-
-                tipsPanel.innerHTML = `<p class="${tipColor} text-xs leading-relaxed">${tip}</p>`;
-            }
-
             nextRound() {
                 if (this.state.currentRound >= this.state.numRounds) {
                     this.showFinalResults();
@@ -1765,19 +1752,19 @@
 
                 this.state.currentRound++;
                 
-                
+                // Pick Item
                 const itemIndex = (this.state.currentRound - 1) % this.ITEMS.length;
                 this.state.currentItem = this.ITEMS[itemIndex];
                 
-                
+                // Reset Round State
                 this.state.highestBid = this.state.currentItem[1];
                 this.state.highestBidder = null;
-                
+                // CHANGED: 2% of BASE PRICE (Initial Item Price)
                 this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                 this.state.roundStatus = 'active';
                 this.state.roundTimeLeft = this.ROUND_DURATION;
-                
-                this.state.roundEndTime = Date.now() + (this.ROUND_DURATION * 1000); 
+                this.state.roundEndTime = Date.now() + (this.ROUND_DURATION * 1000); // Set timestamp for sync
+                this.processingRoundEnd = false; // Feature 8: Reset flag
 
                 this.updateItemUI();
                 document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
@@ -1787,7 +1774,7 @@
                 this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem[0]}`);
 
                 if (this.multiplayerMode && this.isHost) {
-                    
+                    // Sync to Firebase
                     this.roomRef.child('gameState').update({
                         currentRound: this.state.currentRound,
                         currentItem: this.state.currentItem,
@@ -1795,59 +1782,18 @@
                         highestBidder: null,
                         roundStatus: 'active',
                         timerRunning: true,
-                        roundEndTime: Date.now() + (this.ROUND_DURATION * 1000)
+                        roundEndTime: this.state.roundEndTime
                     });
                 }
 
-                this.startTimer();
+                this.startTimerLoop();
                 this.renderPlayers();
-                this.updateAIAnalysis(); 
-            }
-
-            startTimer() {
-                if (this.state.timerInterval) clearInterval(this.state.timerInterval);
-                this.state.timerRunning = true;
-                
-                
-                if (!this.state.roundEndTime && this.state.roundTimeLeft > 0) {
-                    this.state.roundEndTime = Date.now() + (this.state.roundTimeLeft * 1000);
-                }
-
-                const timerEl = document.getElementById('timer');
-                
-                this.state.timerInterval = setInterval(() => {
-                    if (!this.state.timerRunning) return;
-
-                    
-                    const now = Date.now();
-                    const diff = this.state.roundEndTime - now;
-                    this.state.roundTimeLeft = Math.ceil(diff / 1000);
-
-                    
-                    if (this.state.roundTimeLeft < 0) this.state.roundTimeLeft = 0;
-                    
-                    
-                    const m = Math.floor(this.state.roundTimeLeft / 60);
-                    const s = this.state.roundTimeLeft % 60;
-                    timerEl.innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                    
-                    if (this.state.roundTimeLeft <= 10) {
-                        timerEl.classList.add('text-red-500', 'animate-pulse');
-                    } else {
-                        timerEl.classList.remove('text-red-500', 'animate-pulse');
-                    }
-
-                    if (this.state.roundTimeLeft <= 0) {
-                        timerEl.innerText = "00:00"; 
-                        this.endRound();
-                    }
-                }, 1000);
             }
 
             placeBid(player, amountArg = null, isAI = false) {
                 if (this.state.roundStatus !== 'active') return;
                 
-                
+                // Feature 2: Anti-Cheat & Validation
                 if (player === this.state.highestBidder) {
                     if (!isAI) this.updateStatus("You are already the highest bidder!", 'error');
                     return;
@@ -1855,7 +1801,7 @@
                 
                 let amount = amountArg;
                 if (amount === null) {
-                    
+                    // Get from input
                     const input = document.getElementById(`bid-${player}`);
                     if (input) amount = parseFloat(input.value);
                 }
@@ -1865,7 +1811,7 @@
                 const minBid = this.state.highestBid + this.state.minIncrement;
                 const purse = this.state.purses[player];
 
-                
+                // Feature 2: Validation
                 if (amount < minBid) {
                     if (!isAI) this.updateStatus(`Bid too low! Min: ₹${minBid}`, 'error');
                     return;
@@ -1875,40 +1821,57 @@
                     return;
                 }
 
-                
-                if (this.state.roundTimeLeft <= 5) {
-                    this.state.roundTimeLeft += 10;
-                    this.updateStatus("ANTI-SNIPING! +10 Seconds added.");
-                    
-                    if (this.multiplayerMode && this.isHost) {
-                         const newEndTime = Date.now() + (this.state.roundTimeLeft * 1000);
-                         this.roomRef.child('gameState').update({ roundEndTime: newEndTime });
-                    }
-                }
-
-               
-                this.state.highestBid = amount;
-                this.state.highestBidder = player;
-                this.state.bidCounts[player] = (this.state.bidCounts[player] || 0) + 1; // Track count
-                
-                
-                document.getElementById('highestBid').innerText = '₹' + amount.toLocaleString();
-                document.getElementById('highestBidderName').innerText = player;
-                this.logAction(player, amount);
-                this.renderPlayers();
-                this.updateAIAnalysis(); 
-
-                
+                // Feature 1: Race Conditions (Multiplayer)
                 if (this.multiplayerMode) {
-                    this.roomRef.child('bids').push({
-                        player: player,
-                        amount: amount,
-                        timestamp: Date.now()
+                    const gameStateRef = this.roomRef.child('gameState');
+                    // Use Transaction for atomic updates
+                    gameStateRef.transaction((currentData) => {
+                        if (currentData && currentData.roundStatus === 'active' && amount > currentData.highestBid) {
+                            // Valid logic inside transaction
+                            currentData.highestBid = amount;
+                            currentData.highestBidder = player;
+                            
+                            // Anti-Sniping (Server simulation)
+                            const now = Date.now();
+                            if ((currentData.roundEndTime - now) / 1000 <= this.ANTI_SNIPING_WINDOW) {
+                                currentData.roundEndTime += (this.ANTI_SNIPING_EXTENSION * 1000);
+                            }
+                            
+                            return currentData;
+                        }
+                        return; // Abort if changed
+                    }, (error, committed, snapshot) => {
+                        if (error) {
+                            console.error("Transaction failed abnormaly!", error);
+                        } else if (!committed) {
+                             if (!isAI) this.updateStatus("Bid failed! Someone was faster.", 'error');
+                        } else {
+                            // Success - Wait for listener to update UI
+                            // Local updates handled by listener
+                        }
                     });
-                    this.roomRef.child('gameState').update({
-                        highestBid: amount,
-                        highestBidder: player
-                    });
+                } else {
+                    // Single Player Logic (Local)
+                     // Anti-Sniping Logic
+                     const now = Date.now();
+                     if ((this.state.roundEndTime - now) / 1000 <= this.ANTI_SNIPING_WINDOW) {
+                         this.state.roundEndTime += (this.ANTI_SNIPING_EXTENSION * 1000);
+                         this.updateStatus("ANTI-SNIPING! +10 Seconds added.");
+                     }
+
+                    // Execute Bid
+                    this.state.highestBid = amount;
+                    this.state.highestBidder = player;
+                    
+                    // Track Bid Count
+                    this.state.bidCounts[player] = (this.state.bidCounts[player] || 0) + 1;
+                    
+                    // Update UI
+                    document.getElementById('highestBid').innerText = '₹' + amount.toLocaleString();
+                    document.getElementById('highestBidderName').innerText = player;
+                    this.logAction(player, amount);
+                    this.renderPlayers();
+                    this.updateAIAnalysis(); 
                 }
             }
 
@@ -1926,10 +1889,16 @@
             }
 
             endRound(isRemoteTrigger = false) {
+                // Feature 8: Prevent multiple rounds
+                if (this.processingRoundEnd) return;
                 
-                if (this.state.roundResults.some(r => r.round === this.state.currentRound)) return;
+                // Only process if time is actually up or forced
+                const now = Date.now();
+                if (!isRemoteTrigger && (this.state.roundEndTime - now) > 1000 && this.state.timerRunning) return;
 
-                clearInterval(this.state.timerInterval);
+                this.processingRoundEnd = true; 
+                if (this.timerFrameId) cancelAnimationFrame(this.timerFrameId); // Cleanup
+                
                 this.state.timerRunning = false;
                 this.state.roundStatus = 'ended';
 
@@ -1939,7 +1908,7 @@
                 if (winner) {
                     this.state.purses[winner] -= price;
                     
-                    
+                    // Stats
                     const winObj = {
                         round: this.state.currentRound,
                         item: this.state.currentItem[0],
@@ -1948,9 +1917,16 @@
                     };
                     this.state.roundResults.push(winObj);
                     
+                    // Feature 4: History Tracking
+                    this.state.history.push({ 
+                        item: this.state.currentItem[0], 
+                        price: price, 
+                        winner: winner 
+                    });
+
                     this.updateStatus(`${winner} won ${this.state.currentItem[0]} for ₹${price}!`);
                     
-                    
+                    // Confetti
                     confetti({
                         particleCount: 100,
                         spread: 70,
@@ -1962,12 +1938,64 @@
 
                 this.updateLeaderboard();
                 this.renderPlayers();
-                this.updateAIAnalysis(); // Final update for round
+                this.updateAIAnalysis(); // Final update
 
                 if (this.multiplayerMode && this.isHost && !isRemoteTrigger) {
                     this.roomRef.child('players').child(winner).update({ purse: this.state.purses[winner] });
                     this.roomRef.child('gameState').update({ roundStatus: 'ended' });
                 }
+            }
+            
+            // Feature 6: Analytics Dashboard Logic
+            showAnalytics() {
+                // ... (Logic to open modal and calc stats)
+                 const modal = document.getElementById('analyticsModal');
+                 if(modal) {
+                     modal.classList.remove('hidden');
+                     modal.classList.add('flex');
+                     this.updateAnalyticsContent();
+                 }
+            }
+            
+            closeAnalytics() {
+                 const modal = document.getElementById('analyticsModal');
+                 if(modal) {
+                     modal.classList.add('hidden');
+                     modal.classList.remove('flex');
+                 }
+            }
+
+            updateAnalyticsContent() {
+                // Calculate stats for current player
+                let myName = this.currentPlayerName;
+                let totalSpent = 0;
+                let wins = 0;
+                let bids = this.state.bidCounts[myName] || 0;
+
+                this.state.roundResults.forEach(r => {
+                    if (r.winner === myName) {
+                        totalSpent += r.price;
+                        wins++;
+                    }
+                });
+
+                let efficiency = bids > 0 ? Math.round((wins / bids) * 100) : 0;
+
+                document.getElementById('statSpent').innerText = '₹' + totalSpent.toLocaleString();
+                document.getElementById('statWon').innerText = wins;
+                document.getElementById('statEfficiency').innerText = efficiency + '%';
+                
+                // History List
+                const historyDiv = document.getElementById('analyticsHistory');
+                historyDiv.innerHTML = this.state.history.map(h => `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-700 text-sm">
+                        <span class="text-white">${h.item}</span>
+                        <div class="text-right">
+                            <div class="text-gold-400 font-bold">₹${h.price.toLocaleString()}</div>
+                            <div class="text-slate-400 text-xs">${h.winner}</div>
+                        </div>
+                    </div>
+                `).join('');
             }
 
             updateStatus(msg, type = 'info') {
@@ -1977,16 +2005,17 @@
                 div.innerText = msg;
                 container.appendChild(div);
                 
-                
+                // Auto remove
                 setTimeout(() => div.remove(), 3000);
             }
 
             logAction(player, amount) {
                 const log = document.getElementById('auctionLog');
                 const entry = document.createElement('div');
-                
+                // Simplified log style - No boxes, just text
                 entry.className = "text-xs py-1 text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800";
                 entry.innerHTML = `<strong class="text-slate-800 dark:text-slate-200">${player}</strong> bid <span class="text-gold-600 dark:text-gold-400 font-mono">₹${amount.toLocaleString()}</span>`;
+                // Feature 5: Auto-scroll via prepend
                 log.prepend(entry);
             }
 
@@ -2001,13 +2030,13 @@
                 const tbody = document.getElementById('leaderboardBody');
                 tbody.innerHTML = '';
                 
-                
+                // Calculate wins
                 const winCounts = {};
                 this.state.roundResults.forEach(r => {
                     winCounts[r.winner] = (winCounts[r.winner] || 0) + 1;
                 });
 
-                
+                // Sort players by purse desc
                 const sorted = this.state.players.slice().sort((a, b) => this.state.purses[b] - this.state.purses[a]);
 
                 sorted.forEach(p => {
@@ -2023,7 +2052,7 @@
             }
 
             showFinalResults() {
-                
+                // Find winner
                 const winCounts = {};
                 this.state.roundResults.forEach(r => {
                     winCounts[r.winner] = (winCounts[r.winner] || 0) + 1;
@@ -2032,7 +2061,7 @@
                 let maxWins = -1;
                 let winner = "No One";
                 
-                
+                // Tie breaker: Remaining purse
                 for(const p of this.state.players) {
                     const wins = winCounts[p] || 0;
                     if(wins > maxWins) {
@@ -2049,53 +2078,33 @@
                 document.getElementById('winnerWins').innerText = maxWins;
                 document.getElementById('winnerPurse').innerText = '₹' + Math.floor(this.state.purses[winner]).toLocaleString();
                 
-                
-                const historyBody = document.getElementById('roundHistoryBody');
-                historyBody.innerHTML = '';
-                this.state.roundResults.forEach(r => {
-                    const row = document.createElement('tr');
-                    row.className = "hover:bg-black/5 dark:hover:bg-white/5";
-                    row.innerHTML = `
-                        <td class="p-3 border-b border-slate-100 dark:border-slate-800">${r.round}</td>
-                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 font-medium">${r.item}</td>
-                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 font-bold text-slate-800 dark:text-white">${r.winner}</td>
-                        <td class="p-3 border-b border-slate-100 dark:border-slate-800 text-right font-mono text-gold-600 dark:text-gold-400">₹${r.price.toLocaleString()}</td>
-                    `;
-                    historyBody.appendChild(row);
-                });
-
                 const modal = document.getElementById('victoryModal');
                 modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
                 modal.classList.add('flex', 'opacity-100', 'pointer-events-auto');
             }
             
-            closeVictoryModal(exitGame = true) {
-                const modal = document.getElementById('victoryModal');
-                modal.classList.add('hidden', 'opacity-0', 'pointer-events-none');
-                modal.classList.remove('flex', 'opacity-100', 'pointer-events-auto');
-                
-                if (exitGame) {
-                    this.exitToMenu();
-                }
+            closeVictoryModal() {
+                document.getElementById('victoryModal').classList.add('hidden');
+                this.exitToMenu();
             }
 
             handleRemoteBid(bidData) {
-                
+                // Just update UI to match remote state
                 this.state.highestBid = bidData.amount;
                 this.state.highestBidder = bidData.player;
                 
-                
+                // Feature 6: Track bids for analytics
                 this.state.bidCounts[bidData.player] = (this.state.bidCounts[bidData.player] || 0) + 1;
                 
                 document.getElementById('highestBid').innerText = '₹' + bidData.amount.toLocaleString();
                 document.getElementById('highestBidderName').innerText = bidData.player;
                 this.logAction(bidData.player, bidData.amount);
                 this.renderPlayers();
-                this.updateAIAnalysis(); 
+                this.updateAIAnalysis(); // Update analytics
             }
 
             updateMultiplayerUI() {
-            
+                // FIX: Room Code Display
                 const info = document.getElementById('multiplayerRoomInfo');
                 info.innerHTML = `
                     <div class="flex flex-col items-end">
@@ -2125,7 +2134,7 @@
             }
         }
 
-        
+        // Initialize the game controller
         window.gameController = new GameController();
     </script>
 </body>
