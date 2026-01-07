@@ -600,9 +600,15 @@
                     </div>
                 </div>
 
-                <button onclick="window.gameController.closeVictoryModal()" class="w-full px-6 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
-                    Continue to Lobby
-                </button>
+                <div class="flex flex-col gap-3">
+                    <button onclick="window.gameController.closeVictoryModal()" class="w-full px-6 py-4 bg-gradient-to-r from-gold-500 to-yellow-600 text-black font-bold rounded-xl shadow-lg hover:shadow-gold-500/30 hover:-translate-y-1 transition-all">
+                        Continue to Lobby
+                    </button>
+                    <!-- FIX: Added Return to Menu Button -->
+                    <button onclick="window.gameController.exitToMenu()" class="w-full px-6 py-3 border border-slate-200 dark:border-slate-700 text-slate-500 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                        ← Exit to Menu
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1403,18 +1409,18 @@
                     const gameState = snapshot.val();
                     if (!gameState) return;
 
-                    // FIX 2: Bidding Synchronization in Multiplayer
-                    // If the server's highest bid is newer/higher than local state, update immediately.
-                    // This prevents "Someone placed the bid faster" errors due to stale local state.
+                    // FIX 1: Prevent Doubled Logs
+                    // The gameState listener updates the MAIN DISPLAY (Big Numbers) but DOES NOT Log to history.
+                    // This prevents double logging since the 'child_added' listener handles the history.
                     if (gameState.highestBid > this.state.highestBid && gameState.roundStatus === 'active') {
-                        // Silent update to local state to allow new bids to be calculated correctly
                         this.state.highestBid = gameState.highestBid;
                         this.state.highestBidder = gameState.highestBidder;
-                        // Trigger UI update logic
-                        this.handleRemoteBid({
-                            player: gameState.highestBidder,
-                            amount: gameState.highestBid
-                        });
+                        
+                        // Direct UI Update (No Log)
+                        document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
+                        document.getElementById('highestBidderName').innerText = this.state.highestBidder || '-';
+                        this.renderPlayers();
+                        this.updateAIAnalysis();
                     }
 
                     if (gameState.customItem) {
@@ -1454,10 +1460,18 @@
 
                 this.roomRef.child('bids').on('child_added', snapshot => {
                     const bid = snapshot.val();
-                    // NOTE: With the new gameState fix, we might get double updates here,
-                    // but handleRemoteBid is safe to call multiple times for UI effects.
-                    if (bid && bid.player !== this.currentPlayerName) {
-                        this.handleRemoteBid(bid);
+                    // FIX 1: Modified Logic - Log EVERY bid from the database once.
+                    // Previously this filtered out 'this.currentPlayerName', causing issues if local logging was disabled.
+                    // Now it serves as the single source of truth for the history log.
+                    if (bid) {
+                        this.logAction(bid.player, bid.amount);
+                        // Also redundancy update for safety
+                        if (bid.amount > this.state.highestBid) {
+                             this.state.highestBid = bid.amount;
+                             this.state.highestBidder = bid.player;
+                             document.getElementById('highestBid').innerText = '₹' + bid.amount.toLocaleString();
+                             document.getElementById('highestBidderName').innerText = bid.player;
+                        }
                     }
                 });
             }
@@ -1735,13 +1749,18 @@
             }
 
             syncNewRound(gameState) {
+                // FIX 3: Round Sync Logic
+                // Force a hard reset of local state when the server moves to a new round.
                 this.state.currentRound = gameState.currentRound;
-                this.state.currentItem = gameState.currentItem; // [name, price]
+                this.state.currentItem = gameState.currentItem; 
                 this.state.highestBid = gameState.highestBid;
                 this.state.highestBidder = gameState.highestBidder;
-                this.state.roundStatus = gameState.roundStatus;
+                this.state.roundStatus = 'active'; // Force active since we just synced
                 
-                // Recalculate min increment based on base price (item price) - 2% logic
+                // Reset end flags to ensure loop restarts
+                this.processingRoundEnd = false; 
+
+                // Recalculate min increment
                 if (this.state.currentItem) {
                     this.state.minIncrement = Math.ceil(this.state.currentItem[1] * this.MIN_INCREMENT_RATIO);
                 }
@@ -1754,17 +1773,17 @@
                 
                 document.getElementById('highestBid').innerText = '₹' + this.state.highestBid.toLocaleString();
                 document.getElementById('highestBidderName').innerText = this.state.highestBidder || '-';
+                // Clear log for new round
                 document.getElementById('auctionLog').innerHTML = '';
                 
                 this.updateStatus(`Round ${this.state.currentRound} Started! Item: ${this.state.currentItem ? this.state.currentItem[0] : 'Unknown'}`);
 
                 if (gameState.timerRunning) {
-                    // Sync timer
+                    this.state.roundEndTime = gameState.roundEndTime;
                     const now = Date.now();
                     const remaining = Math.ceil((gameState.roundEndTime - now) / 1000);
-                    this.state.roundEndTime = gameState.roundEndTime; // Sync end time
                     this.state.roundTimeLeft = remaining > 0 ? remaining : 0;
-                    this.startTimerLoop(); // Feature 7
+                    this.startTimerLoop(); 
                 }
                 
                 this.renderPlayers();
@@ -1875,6 +1894,18 @@
                         timerRunning: true,
                         roundEndTime: this.state.roundEndTime
                     });
+                    // Clear bids from previous round
+                    this.roomRef.child('bids').remove();
+                } else if (!this.multiplayerMode) {
+                    // Only sync locally if NOT in multiplayer host mode
+                    this.syncNewRound({
+                        currentRound: this.state.currentRound,
+                        currentItem: this.state.currentItem,
+                        highestBid: this.state.highestBid,
+                        highestBidder: null,
+                        roundEndTime: this.state.roundEndTime,
+                        timerRunning: true
+                    });
                 }
 
                 // FIX 1: Generate Initial Tips and Security Log for the round
@@ -1944,9 +1975,8 @@
                         } else if (!committed) {
                              if (!isAI) this.updateStatus("Bid failed! Someone was faster.", 'error');
                         } else {
-                            // FIX 2: Explicitly push to 'bids' to ensure history logs work
-                            // This ensures the live log updates for all users.
-                            // The synchronization of the 'Current Bid' amount is handled by the improved gameState listener.
+                            // FIX 2: Explicitly push to 'bids'. 
+                            // This will trigger 'child_added' which now handles ALL logging cleanly.
                             this.roomRef.child('bids').push({
                                 player: player,
                                 amount: amount,
@@ -2283,20 +2313,7 @@
                 this.exitToMenu();
             }
 
-            handleRemoteBid(bidData) {
-                // Just update UI to match remote state
-                this.state.highestBid = bidData.amount;
-                this.state.highestBidder = bidData.player;
-                
-                // Feature 6: Track bids for analytics
-                this.state.bidCounts[bidData.player] = (this.state.bidCounts[bidData.player] || 0) + 1;
-                
-                document.getElementById('highestBid').innerText = '₹' + bidData.amount.toLocaleString();
-                document.getElementById('highestBidderName').innerText = bidData.player;
-                this.logAction(bidData.player, bidData.amount);
-                this.renderPlayers();
-                this.updateAIAnalysis(); // Update analytics
-            }
+            // Removed handleRemoteBid to simplify redundant logging logic
 
             updateMultiplayerUI() {
                 // FIX: Room Code Display
