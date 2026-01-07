@@ -1385,7 +1385,12 @@
                 // Feature 7: Optimize DOM batching
                 const playersHTML = this.state.players.map(player => {
                     const isWithdrawn = this.state.withdrawnPlayers[player];
-                    const isMe = this.multiplayerMode ? (player === this.currentPlayerName) : true;
+                    
+                    // FIXED: Strictly check if the card belongs to the current player
+                    // Previously: this.multiplayerMode ? (player === this.currentPlayerName) : true;
+                    // This change prevents controlling bots in Single Player mode.
+                    const isMe = player === this.currentPlayerName;
+                    
                     const isWinning = player === this.state.highestBidder;
                     const isAI = this.state.aiPlayers[player]?.active;
                     
@@ -1996,6 +2001,41 @@
                         </div>
                     </div>
                 `).join('');
+            }
+            
+            // Missing function added to prevent crashes
+            updateAIAnalysis() {
+                const panel = document.getElementById('strategyPanel');
+                if (!panel) return;
+                
+                if (this.state.roundStatus === 'waiting') {
+                     panel.innerHTML = '<div class="text-slate-400">Waiting for data...</div>';
+                     return;
+                }
+
+                // Simple market analysis
+                const currentPrice = this.state.highestBid;
+                const basePrice = this.state.currentItem ? this.state.currentItem[1] : 1;
+                const ratio = (currentPrice / basePrice).toFixed(1);
+                
+                let analysis = '';
+                if (ratio < 0.5) analysis = `<span class="text-emerald-400">Steal Deal!</span> Price is well below market value.`;
+                else if (ratio < 1.2) analysis = `<span class="text-blue-400">Fair Value.</span> Standard market pricing.`;
+                else if (ratio < 2.0) analysis = `<span class="text-gold-400">Heating Up!</span> Bidding is getting competitive.`;
+                else analysis = `<span class="text-rose-400">Overpriced!</span> High risk territory.`;
+
+                const prediction = this.state.roundTimeLeft < 15 ? "Closing soon!" : "Market active.";
+
+                panel.innerHTML = `
+                    <div class="mb-2 border-b border-slate-700 pb-2">
+                        <div class="text-slate-400 font-bold uppercase text-[10px]">Valuation</div>
+                        <div class="text-sm">${analysis}</div>
+                    </div>
+                    <div>
+                        <div class="text-slate-400 font-bold uppercase text-[10px]">Trend</div>
+                        <div class="text-sm text-slate-300">${prediction} Volume: ${Object.keys(this.state.bidCounts).length} active bidders.</div>
+                    </div>
+                `;
             }
 
             updateStatus(msg, type = 'info') {
